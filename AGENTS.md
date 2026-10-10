@@ -20,3 +20,10 @@
 - Simulator tests verify requests, pattern construction, and UI; they cannot verify physical vibration. Report the tested simulator/runtime and unexecuted hardware and iOS 26.0 minimum-runtime checks. Do not present historical results in VERIFICATION.md as checks run for the current change.
 - Update README.md when behavior or setup changes, and VERIFICATION.md when recording new checks or limitations. Record failed or unavailable checks honestly.
 - Do not install on physical devices or change repository visibility without an explicit request. Keep personal signing settings, credentials, build output, and Xcode user state out of Git. Preserve unrelated user changes.
+
+## Development team and signing: never commit
+
+- Never commit actual Apple development team IDs, team/account names or emails, personal signing identities, provisioning-profile identifiers, or signing credentials in any file, including project settings, configuration files, scripts, documentation, and logs. Empty team settings and generic placeholders are allowed.
+- Treat signing changes made by Xcode as local-only. Before every commit, inspect the complete staged diff and staged signing configuration for these details, including `DEVELOPMENT_TEAM`, `DevelopmentTeam`, `CODE_SIGN_IDENTITY`, `PROVISIONING_PROFILE`, and `PROVISIONING_PROFILE_SPECIFIER`. Generic SDK signing defaults are allowed; personal values are not.
+- If prohibited details are staged, stop the commit. Exclude those changes from staging while preserving the user's local signing setup and unrelated edits, then inspect the staged result again. Do not commit or push until it is clean. `.gitignore` does not protect settings inside already tracked files.
+- If details are already committed, report the affected files without repeating the values. Do not push them or rewrite published history without explicit authorization.

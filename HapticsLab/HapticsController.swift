@@ -11,7 +11,9 @@ final class HapticsController {
     private(set) var isPlaying = false
     private(set) var status = "Ready"
     private(set) var errorMessage: String?
-    let supportsCustomHaptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics
+    let capabilities = HapticCapabilities.detect()
+    let deviceInfo = HapticDeviceInfo.detect()
+    var supportsCustomHaptics: Bool { capabilities.supportsHaptics }
 
     @ObservationIgnored private var engine: CHHapticEngine?
     @ObservationIgnored private var engineIdentity: UUID?
@@ -37,14 +39,16 @@ final class HapticsController {
         startupTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let events = try configuration.events()
+                let limits = capabilities.event(configuration.kind)
+                try limits.validate(configuration)
+                _ = try configuration.events()
                 let engine = try makeEngine()
                 try await engine.start()
                 guard token == generation, !Task.isCancelled else {
                     try? await engine.stop()
                     return
                 }
-                let pattern = try Self.pattern(configuration, events: events)
+                let pattern = try Self.pattern(configuration, capabilities: limits)
                 let player = try engine.makeAdvancedPlayer(with: pattern)
                 player.completionHandler = { [weak self] error in
                     let message = error?.localizedDescription
@@ -114,18 +118,27 @@ final class HapticsController {
         status = error == nil ? "Custom haptic finished" : "Playback failed"
     }
 
-    static func pattern(_ configuration: CustomHapticConfiguration,
-                        events: [CustomHapticConfiguration.Event]) throws -> CHHapticPattern {
-        try CHHapticPattern(events: events.map {
+    static func hapticEvents(_ configuration: CustomHapticConfiguration,
+                             capabilities: HapticEventCapabilities) throws -> [CHHapticEvent] {
+        try capabilities.validate(configuration)
+        let events = try configuration.events()
+        let parameters = configuration.activeParameters.compactMap { parameter -> CHHapticEventParameter? in
+            guard capabilities.ranges[parameter] != nil else { return nil }
+            return CHHapticEventParameter(parameterID: parameter.parameterID,
+                                          value: Float(configuration.value(for: parameter)))
+        }
+        return events.map {
             CHHapticEvent(
                 eventType: configuration.kind == .transient ? .hapticTransient : .hapticContinuous,
-                parameters: [
-                    CHHapticEventParameter(parameterID: .hapticIntensity, value: Float(configuration.intensity)),
-                    CHHapticEventParameter(parameterID: .hapticSharpness, value: Float(configuration.sharpness))
-                ],
+                parameters: parameters,
                 relativeTime: $0.time,
                 duration: $0.duration
             )
-        }, parameters: [])
+        }
+    }
+
+    static func pattern(_ configuration: CustomHapticConfiguration,
+                        capabilities: HapticEventCapabilities) throws -> CHHapticPattern {
+        try CHHapticPattern(events: hapticEvents(configuration, capabilities: capabilities), parameters: [])
     }
 }

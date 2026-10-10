@@ -3,22 +3,29 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var controller = HapticsController()
-    @State private var canvas = CanvasHaptics()
     @State private var request: NativeHapticRequest?
     @State private var sequence: UInt64 = 0
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading) {
-                    HapticsGrid(controller: controller, canvas: canvas, onRequest: requestHaptic)
-                    HapticsStatus(status: controller.status)
+                VStack {
+                    HapticsGrid(controller: controller, onRequest: requestHaptic)
+                    NavigationLink {
+                        CustomHapticsView(controller: controller)
+                    } label: {
+                        HapticTileLabel(title: "Custom haptics testing")
+                            .padding(.vertical)
+                    }
+                    .accessibilityIdentifier("haptics.custom")
+                    HapticDeviceFooter(info: controller.deviceInfo, supportsHaptics: controller.supportsCustomHaptics)
                 }
+                .buttonStyle(HapticButtonStyle())
+                .controlSize(.large)
                 .padding()
             }
-            .navigationTitle("Haptics")
+            .navigationTitle("Haptics Lab")
             .navigationBarTitleDisplayMode(.inline)
-            .background(CanvasHapticAnchor(haptics: canvas))
             .sensoryFeedback(trigger: request) { _, new in new?.haptic.feedback }
             .onChange(of: scenePhase) { _, phase in
                 if phase != .active { controller.stop() }
@@ -43,7 +50,6 @@ struct ContentView: View {
 
 private struct HapticsGrid: View {
     let controller: HapticsController
-    let canvas: CanvasHaptics
     let onRequest: (NativeHaptic) -> Void
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -53,82 +59,64 @@ private struct HapticsGrid: View {
                 Button {
                     onRequest(haptic)
                 } label: {
-                    HapticTileLabel(title: haptic.title, symbol: haptic.symbol)
+                    HapticTileLabel(title: haptic.title)
                 }
-                .aspectRatio(1, contentMode: .fit)
                 .accessibilityIdentifier("haptics." + haptic.rawValue)
                 .accessibilityValue(controller.status == "Requested: " + String(localized: haptic.title) ? "Requested" : "Ready")
             }
-            NavigationLink {
-                CustomHapticsView(controller: controller)
-            } label: {
-                HapticTileLabel(title: "Custom haptics", symbol: "slider.horizontal.3")
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .accessibilityIdentifier("haptics.custom")
-            CanvasFeedbackButton(title: "Canvas alignment", alignment: true,
-                                 controller: controller, canvas: canvas)
-            CanvasFeedbackButton(title: "Canvas path completed", alignment: false,
-                                 controller: controller, canvas: canvas)
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.roundedRectangle)
-        .controlSize(.large)
     }
 }
 
 private struct HapticTileLabel: View {
     let title: LocalizedStringResource
-    let symbol: String
+
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                Image(systemName: symbol)
-                    .font(.largeTitle)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .font(.title3)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(String(localized: title).contains(" ") ? 2 : 1)
-                    .minimumScaleFactor(0.2)
-            }
+        Text(title)
+            .font(.title3)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+private struct HapticButtonStyle: ButtonStyle {
+    private let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.primary)
             .padding()
-            .frame(width: geometry.size.width, height: geometry.size.height)
-        }
+            .frame(maxWidth: .infinity)
+            .background(.background, in: shape)
+            .overlay {
+                shape
+                    .strokeBorder(.secondary, lineWidth: 1)
+            }
+            .contentShape(shape)
+            .opacity(configuration.isPressed ? 0.65 : 1)
     }
 }
 
-private struct CanvasFeedbackButton: View {
-    let title: LocalizedStringResource
-    let alignment: Bool
-    let controller: HapticsController
-    let canvas: CanvasHaptics
-
-    var body: some View {
-        Button {
-            canvas.play(alignment: alignment)
-            controller.recordNativeRequest(String(localized: title))
-        } label: {
-            HapticTileLabel(title: title, symbol: "pencil.tip")
-        }
-        .aspectRatio(1, contentMode: .fit)
-        .accessibilityIdentifier(alignment ? "haptics.canvasAlignment" : "haptics.canvasPath")
-        .accessibilityValue(controller.status == "Requested: " + String(localized: title) ? "Requested" : "Ready")
-    }
-}
-
-private struct HapticsStatus: View {
-    let status: String
+private struct HapticDeviceFooter: View {
+    let info: HapticDeviceInfo
+    let supportsHaptics: Bool
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text(status)
-                .accessibilityIdentifier("haptics.status")
-            Text("Canvas feedback requires Apple Pencil Pro and a compatible iPad.")
+            Text("Detected: \(info.model) • \(info.system)")
+            Text("Model identifier: \(info.hardwareIdentifier)")
+            if info.isSimulator {
+                Text("Simulator — physical vibration is unavailable.")
+            } else {
+                Text(supportsHaptics ? "Custom haptics supported." : "Custom haptics unavailable.")
+            }
         }
         .font(.footnote)
         .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("haptics.device")
     }
 }
 

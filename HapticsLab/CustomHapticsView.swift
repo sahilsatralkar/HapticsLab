@@ -2,7 +2,16 @@ import SwiftUI
 
 struct CustomHapticsView: View {
     @Bindable var controller: HapticsController
-    @State private var configuration = CustomHapticConfiguration.defaults
+    @State private var configuration: CustomHapticConfiguration
+
+    init(controller: HapticsController) {
+        self.controller = controller
+        var initial = CustomHapticConfiguration.defaults
+        initial.resetParameters(using: controller.capabilities.event(initial.kind))
+        _configuration = State(initialValue: initial)
+    }
+
+    private var limits: HapticEventCapabilities { controller.capabilities.event(configuration.kind) }
 
     var body: some View {
         Form {
@@ -14,68 +23,169 @@ struct CustomHapticsView: View {
                 }
                 .pickerStyle(.segmented)
                 .accessibilityIdentifier("custom.kind")
-                parameter("Intensity", value: $configuration.intensity, range: 0...1, step: 0.05)
-                parameter("Sharpness", value: $configuration.sharpness, range: 0...1, step: 0.05)
+                HapticParameterControl(parameter: .intensity, configuration: $configuration, limits: limits)
+                HapticParameterControl(parameter: .sharpness, configuration: $configuration, limits: limits)
+            } footer: {
+                Text("Ranges and reset values come from this device. Changing the event resets its parameters.")
             }
-            Section("Timing") {
-                if configuration.kind == .continuous {
-                    parameter("Duration", value: $configuration.duration, range: 0.05...3, step: 0.05, seconds: true)
-                }
-                Stepper("Pulses: \(configuration.pulseCount)", value: $configuration.pulseCount, in: 1...8)
-                    .accessibilityIdentifier("custom.pulses")
-                parameter("Gap", value: $configuration.gap, range: 0.05...2, step: 0.05, seconds: true)
-            }
+            HapticEnvelopeSection(configuration: $configuration, limits: limits)
+            HapticTimingSection(configuration: $configuration)
             Section {
                 Button {
                     controller.playCustom(configuration)
                 } label: {
-                    Label(controller.isPlaying ? "Playing" : "Play custom haptic", systemImage: "waveform")
+                    Text(controller.isPlaying ? "Playing" : "Play custom haptic")
                         .font(.title3)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical)
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(controller.isPlaying || validationMessage != nil)
+                .disabled(controller.isPlaying || (controller.supportsCustomHaptics && validationMessage != nil))
                 .accessibilityIdentifier("custom.play")
                 if controller.isPlaying {
-                    Button("Stop", systemImage: "stop.fill", action: controller.stop)
+                    Button("Stop", action: controller.stop)
                         .buttonStyle(.bordered)
                         .frame(maxWidth: .infinity)
                         .accessibilityIdentifier("custom.stop")
                 }
-                Text(validationMessage ?? controller.status)
+                Text(controller.supportsCustomHaptics ? (validationMessage ?? controller.status) : controller.status)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("custom.status")
-            } footer: {
-                Text("Sharpness changes the feel from rounded to crisp. A gap is silence between pulses. Maximum pattern length: 10 seconds.")
+                if !controller.supportsCustomHaptics {
+                    Text("This device cannot play custom vibrations. Any available parameter ranges do not establish playback support.")
+                        .foregroundStyle(.secondary)
+                }
             }
             Section {
-                Button("Reset parameters") { configuration = .defaults }
-                    .accessibilityIdentifier("custom.reset")
+                Button("Reset parameters") {
+                    configuration = .defaults
+                    configuration.resetParameters(using: controller.capabilities.event(configuration.kind))
+                }
+                .accessibilityIdentifier("custom.reset")
             }
         }
+        .buttonBorderShape(.roundedRectangle(radius: 12))
         .navigationTitle("Custom")
+        .onChange(of: configuration.kind) { _, kind in
+            configuration.resetParameters(using: controller.capabilities.event(kind))
+        }
         .onDisappear { controller.stop() }
     }
 
     private var validationMessage: String? {
-        do { _ = try configuration.events(); return nil }
-        catch { return error.localizedDescription }
+        do {
+            _ = try configuration.events()
+            try limits.validate(configuration)
+            return nil
+        } catch { return error.localizedDescription }
     }
+}
 
-    private func parameter(_ title: String, value: Binding<Double>, range: ClosedRange<Double>,
-                           step: Double, seconds: Bool = false) -> some View {
+private struct HapticEnvelopeSection: View {
+    @Binding var configuration: CustomHapticConfiguration
+    let limits: HapticEventCapabilities
+
+    var body: some View {
+        Section {
+            HapticParameterControl(parameter: .attack, configuration: $configuration, limits: limits)
+            if let sustain = limits.ranges[.sustained],
+               sustain.contains(0), sustain.contains(1) {
+                Toggle("Sustain", isOn: $configuration.sustained)
+                    .accessibilityIdentifier("custom.sustained")
+            } else {
+                LabeledContent("Sustain", value: limits.ranges[.sustained] == nil ? "Unavailable" : "Fixed by device")
+            }
+            if configuration.sustained {
+                HapticParameterControl(parameter: .release, configuration: $configuration, limits: limits)
+            } else {
+                HapticParameterControl(parameter: .decay, configuration: $configuration, limits: limits)
+            }
+        } header: {
+            Text("Envelope")
+        } footer: {
+            Text("Attack controls the rise. With Sustain off, Decay controls the fall; with Sustain on, Release controls the fade after the event. These values are normalized, not seconds.")
+        }
+    }
+}
+
+private struct HapticParameterControl: View {
+    let parameter: HapticParameter
+    @Binding var configuration: CustomHapticConfiguration
+    let limits: HapticEventCapabilities
+
+    var body: some View {
+        if let range = limits.ranges[parameter] {
+            HapticValueSlider(title: parameter.title,
+                              value: Binding(get: { configuration.value(for: parameter) },
+                                             set: { configuration.set($0, for: parameter) }),
+                              range: range.bounds, identifier: "custom." + parameter.rawValue)
+        } else {
+            LabeledContent {
+                Text("Unavailable for this event")
+            } label: {
+                Text(parameter.title)
+            }
+            .accessibilityIdentifier("custom.unavailable." + parameter.rawValue)
+        }
+    }
+}
+
+private struct HapticTimingSection: View {
+    @Binding var configuration: CustomHapticConfiguration
+
+    var body: some View {
+        Section {
+            if configuration.kind == .continuous {
+                HapticValueSlider(title: "Duration", value: $configuration.duration,
+                                  range: 0...CustomHapticConfiguration.maximumContinuousDuration,
+                                  identifier: "custom.duration", seconds: true)
+            }
+            Stepper("Pulses: \(configuration.pulseCount)", value: $configuration.pulseCount,
+                    in: CustomHapticConfiguration.pulseRange)
+                .accessibilityIdentifier("custom.pulses")
+            HapticValueSlider(title: "Gap", value: $configuration.gap,
+                              range: CustomHapticConfiguration.gapRange,
+                              identifier: "custom.gap", seconds: true)
+        } header: {
+            Text("Timing")
+        } footer: {
+            Text("Continuous duration must be above zero, up to the Core Haptics limit of 30 seconds per event. This app allows 1–8 pulses and 0–2 seconds between scheduled events. A release tail can overlap that gap.")
+        }
+    }
+}
+
+private struct HapticValueSlider: View {
+    let title: LocalizedStringResource
+    @Binding var value: Double
+    let range: ClosedRange<Double>
+    let identifier: String
+    var seconds = false
+
+    var body: some View {
         VStack(alignment: .leading) {
-            LabeledContent(title) {
+            LabeledContent {
                 HStack {
-                    Text(value.wrappedValue, format: .number.precision(.fractionLength(2)))
+                    Text(value, format: .number.precision(.fractionLength(3)))
                         .monospacedDigit()
                     if seconds { Text("s") }
                 }
+            } label: {
+                Text(title)
             }
-            Slider(value: value, in: range, step: step) { Text(title) }
-                .accessibilityIdentifier("custom." + title.lowercased())
+            if range.lowerBound < range.upperBound {
+                Slider(value: $value, in: range) { Text(title) }
+                    .accessibilityIdentifier(identifier)
+            }
+            HStack {
+                Text(range.lowerBound, format: .number.precision(.fractionLength(0...3)))
+                Spacer()
+                Text(range.upperBound, format: .number.precision(.fractionLength(0...3)))
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Range \(range.lowerBound) to \(range.upperBound)")
         }
     }
 }

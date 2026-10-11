@@ -8,6 +8,21 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Toolbar Play control — 11 October 2026
+
+Moved Play to a native top-trailing toolbar button using the `play.fill` SF Symbol and an accessible “Play custom haptic” label. It uses primary foreground when enabled and secondary gray when disabled, preserving the existing starting/playing and validation disable conditions. The controller's duplicate-play guard, Stop control, and playback cancellation are unchanged. Removed the persistent playback status and hardware explanation from the Form; unsupported-hardware feedback now uses the existing playback error alert. Native spacing is preserved. README remains deferred.
+
+Review continued with the external exported SwiftUI guidance identified above; no locally exposed built-in Xcode skill was invoked.
+
+Current-change checks through Xcode MCP on iPhone 13 mini simulator, iOS 26.5:
+
+- Compact light/dark/largest-accessibility layout test passed, including top-right navigation-bar placement, visibility while scrolling, and removed playback copy.
+- The Custom controls test initially failed because the existing error alert was attached to the home List and did not present on the pushed Custom screen. Moved that alert to CustomHapticsView. The targeted Custom controls rerun passed, checking toolbar accessibility/activation, unsupported-hardware feedback, alert dismissal, and reset. The passing layout test was not repeated after this alert-only correction.
+- Final normal build passed with no reported errors. Git diff whitespace check passed. Unit tests were not rerun for this UI change.
+- Screenshots were captured as test attachments but not visually inspected. Disabled gray appearance and ignored taps during real playback were preserved in source but cannot be exercised with simulator haptic playback. Physical vibration, hardware playback/Stop, and iOS 26.0 minimum-runtime checks remain unexecuted. No physical device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_12-19-15-+0530.xcresult` (initial), `Test-HapticsLab-2026.10.11_12-21-43-+0530.xcresult` (targeted rerun), `BuildProject-Log-20261011-122245.txt` (final build). Temporary artifacts are not distributed.
+
 ## Custom duration and title — 11 October 2026
 
 Renamed the navigation title to “Custom haptics” and replaced the Tap/Continuous picker with an always-visible, smooth Duration slider. At the user's direction, zero selects a native transient event; positive values select a continuous event up to the existing 30-second limit. Reset returns duration to zero. Switching event types retains device-specific parameter defaults/ranges. Negative, nonfinite, and out-of-range durations remain rejected. Native padding and playback cancellation/lifecycle handling are preserved. README remains deferred.

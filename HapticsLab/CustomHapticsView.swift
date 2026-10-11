@@ -26,31 +26,12 @@ struct CustomHapticsView: View {
             }
             HapticEnvelopeSection(configuration: $configuration, limits: limits)
             HapticTimingSection(configuration: $configuration)
-            Section {
-                Button {
-                    controller.playCustom(configuration)
-                } label: {
-                    Text(controller.isPlaying ? "Playing" : "Play custom haptic")
-                        .font(.title3)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(controller.isPlaying || (controller.supportsCustomHaptics && validationMessage != nil))
-                .accessibilityIdentifier("custom.play")
-                if controller.isPlaying {
+            if controller.isPlaying {
+                Section {
                     Button("Stop", action: controller.stop)
                         .buttonStyle(.bordered)
                         .frame(maxWidth: .infinity)
                         .accessibilityIdentifier("custom.stop")
-                }
-                Text(controller.supportsCustomHaptics ? (validationMessage ?? controller.status) : controller.status)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .accessibilityIdentifier("custom.status")
-                if !controller.supportsCustomHaptics {
-                    Text("This device cannot play custom vibrations. Any available parameter ranges do not establish playback support.")
-                        .foregroundStyle(.secondary)
                 }
             }
             Section {
@@ -63,10 +44,36 @@ struct CustomHapticsView: View {
         }
         .buttonBorderShape(.roundedRectangle(radius: 12))
         .navigationTitle("Custom haptics")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    controller.playCustom(configuration)
+                } label: {
+                    Label("Play custom haptic", systemImage: "play.fill")
+                        .labelStyle(.iconOnly)
+                }
+                .foregroundStyle(playDisabled ? Color.secondary : Color.primary)
+                .disabled(playDisabled)
+                .accessibilityIdentifier("custom.play")
+                .accessibilityHint(validationMessage ?? "")
+            }
+        }
         .onChange(of: configuration.kind) { _, kind in
             configuration.resetParameters(using: controller.capabilities.event(kind))
         }
         .onDisappear { controller.stop() }
+        .alert("Playback unavailable", isPresented: Binding(
+            get: { controller.errorMessage != nil },
+            set: { if !$0 { controller.clearError() } }
+        )) {
+            Button("OK", role: .cancel, action: controller.clearError)
+        } message: {
+            Text(controller.errorMessage ?? "")
+        }
+    }
+
+    private var playDisabled: Bool {
+        controller.isPlaying || (controller.supportsCustomHaptics && validationMessage != nil)
     }
 
     private var validationMessage: String? {

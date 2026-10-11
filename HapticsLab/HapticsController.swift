@@ -30,6 +30,7 @@ final class HapticsController {
         errorMessage = nil
         guard supportsCustomHaptics else {
             status = "Custom haptics require supported physical hardware."
+            errorMessage = status
             return
         }
         generation &+= 1

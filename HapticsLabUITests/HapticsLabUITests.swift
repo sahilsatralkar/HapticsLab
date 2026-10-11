@@ -57,11 +57,18 @@ final class HapticsLabUITests: XCTestCase {
         XCTAssertEqual(duration.value as? String, initialDuration)
         duration.adjust(toNormalizedSliderPosition: 1)
         XCTAssertNotEqual(duration.value as? String, initialDuration)
-        reveal(app.buttons["custom.play"], in: app)
-        app.buttons["custom.play"].tap()
+        let play = app.navigationBars["Custom haptics"].buttons["custom.play"]
+        XCTAssertTrue(play.exists && play.isHittable && play.isEnabled)
+        XCTAssertEqual(play.label, "Play custom haptic")
+        XCTAssertFalse(app.cells.containing(.button, identifier: "custom.play").firstMatch.exists)
+        XCTAssertFalse(app.staticTexts["custom.status"].exists)
+        play.tap()
         #if targetEnvironment(simulator)
-        reveal(app.staticTexts["custom.status"], in: app)
-        XCTAssertEqual(app.staticTexts["custom.status"].label, "Custom haptics require supported physical hardware.")
+        let alert = app.alerts["Playback unavailable"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        XCTAssertTrue(alert.staticTexts["Custom haptics require supported physical hardware."].exists)
+        alert.buttons["OK"].tap()
+        XCTAssertTrue(play.isEnabled)
         #endif
         reveal(app.buttons["custom.reset"], in: app)
         app.buttons["custom.reset"].tap()
@@ -119,8 +126,15 @@ final class HapticsLabUITests: XCTestCase {
             reveal(app.sliders["custom.duration"], in: app)
             XCTAssertTrue(app.sliders["custom.duration"].isHittable)
             attach(app, "Custom-duration-" + appearance + "-" + size)
-            reveal(app.buttons["custom.play"], in: app)
-            XCTAssertTrue(app.buttons["custom.play"].isHittable)
+            let navigationBar = app.navigationBars["Custom haptics"]
+            let play = navigationBar.buttons["custom.play"]
+            XCTAssertTrue(play.exists && play.isHittable)
+            XCTAssertGreaterThan(play.frame.midX, navigationBar.frame.midX)
+            XCTAssertTrue(app.windows.firstMatch.frame.contains(play.frame))
+            XCTAssertFalse(app.staticTexts["custom.status"].exists)
+            XCTAssertFalse(app.staticTexts["This device cannot play custom vibrations. Any available parameter ranges do not establish playback support."].exists)
+            reveal(app.buttons["custom.reset"], in: app)
+            XCTAssertTrue(play.isHittable)
             attach(app, "Custom-" + appearance + "-" + size)
             app.terminate()
         }

@@ -35,14 +35,6 @@ struct ContentView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase != .active { controller.stop() }
             }
-            .alert("Playback unavailable", isPresented: Binding(
-                get: { controller.errorMessage != nil },
-                set: { if !$0 { controller.clearError() } }
-            )) {
-                Button("OK", role: .cancel, action: controller.clearError)
-            } message: {
-                Text(controller.errorMessage ?? "")
-            }
         }
     }
 

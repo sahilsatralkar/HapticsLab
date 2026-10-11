@@ -8,6 +8,16 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Haptics footer guidance — 11 October 2026
+
+Replaced the Haptics footer with the user's wording explaining Intensity, Sharpness, and Continuous. Controls, native padding, parameter handling, and playback behavior are unchanged. Review continued with the previously reviewed external exported SwiftUI guidance above; no locally exposed built-in Xcode skill was invoked. README remains deferred at the user's request.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: the compact light/dark/largest-accessibility layout test passed.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed. Unit tests were not rerun for this copy-only change.
+- Test screenshots were captured but not visually inspected. Physical vibration and iOS 26.0 minimum-runtime execution were not checked; no physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_13-46-02-+0530.xcresult`, `BuildProject-Log-20261011-134735.txt` (temporary, not distributed).
+
 ## Haptics section and Continuous toggle — 11 October 2026
 
 The first Custom section is now titled “Haptics”, ordered Intensity, Sharpness, Continuous, then Duration only while Continuous is enabled. Continuous defaults off; its remembered duration starts at 0.2 seconds and supports smooth adjustment through the existing 30-second maximum. The toggle independently selects native transient/continuous event types. Zero duration is rejected for continuous playback and displays an inline explanation; it no longer selects a tap. Turning Continuous off preserves duration while scheduling zero-duration transient events. Reset turns Continuous off and restores 0.2 seconds.

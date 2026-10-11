@@ -36,7 +36,7 @@ struct CustomHapticsView: View {
             } header: {
                 Text("Haptics")
             } footer: {
-                Text("Continuous off plays a tap. Values outside the selected event’s range reset to device defaults.")
+                Text("Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps.")
             }
             HapticEnvelopeSection(configuration: $configuration, limits: limits)
             HapticTimingSection(configuration: $configuration)

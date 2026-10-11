@@ -1,6 +1,5 @@
 import CoreHaptics
 import XCTest
-import UniformTypeIdentifiers
 @testable import HapticsLab
 
 @MainActor
@@ -91,15 +90,41 @@ final class HapticSwiftExportTests: XCTestCase {
             capabilities: HapticEventCapabilities(ranges: [:], unavailable: [:])))
     }
 
-    func testExportDocumentKeepsSnapshotAfterDraftChanges() throws {
+    func testSharedFileKeepsSnapshotAfterDraftChanges() throws {
         var draft = CustomHapticConfiguration.defaults
         let limits = try capabilities()
         let original = try HapticSwiftExport.source(for: draft, capabilities: limits)
-        let document = HapticSwiftDocument(source: original)
+        let file = try HapticShareFile(source: original)
+        defer { try? file.remove() }
         draft.intensity = 0.01
         draft.pulseCount = 8
-        XCTAssertEqual(document.source, original)
-        XCTAssertNotEqual(document.source, try HapticSwiftExport.source(for: draft, capabilities: limits))
-        XCTAssertEqual(HapticSwiftDocument.readableContentTypes.first?.preferredFilenameExtension, "swift")
+        let saved = try String(contentsOf: file.url, encoding: .utf8)
+        XCTAssertEqual(saved, original)
+        XCTAssertNotEqual(saved, try HapticSwiftExport.source(for: draft, capabilities: limits))
+        XCTAssertEqual(file.url.lastPathComponent, "CustomHaptic.swift")
+    }
+
+    func testShareFilesAreIndependentAndCleanUpOnlyTheirOwnDirectory() throws {
+        let first = try HapticShareFile(source: "// First snapshot\nlet intensity = 0.25\n")
+        defer { try? first.remove() }
+        let second = try HapticShareFile(source: "// Second snapshot — SwiftUI\nlet intensity = 0.75\n")
+        defer { try? second.remove() }
+        XCTAssertNotEqual(first.url, second.url)
+        XCTAssertEqual(try String(contentsOf: first.url, encoding: .utf8),
+                       "// First snapshot\nlet intensity = 0.25\n")
+        XCTAssertEqual(try String(contentsOf: second.url, encoding: .utf8),
+                       "// Second snapshot — SwiftUI\nlet intensity = 0.75\n")
+        try first.remove()
+        try first.remove()
+        XCTAssertFalse(FileManager.default.fileExists(atPath: first.url.deletingLastPathComponent().path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: second.url.path))
+    }
+
+    func testShareFileReportsPreparationFailure() throws {
+        let blocker = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try Data("not a directory".utf8).write(to: blocker)
+        defer { try? FileManager.default.removeItem(at: blocker) }
+        XCTAssertThrowsError(try HapticShareFile(source: "import SwiftUI", temporaryDirectory: blocker))
+        XCTAssertEqual(try String(contentsOf: blocker, encoding: .utf8), "not a directory")
     }
 }

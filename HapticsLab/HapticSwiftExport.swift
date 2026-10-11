@@ -1,6 +1,5 @@
 import CoreHaptics
-import SwiftUI
-import UniformTypeIdentifiers
+import Foundation
 
 /// Captures the current draft as a standalone SwiftUI/Core Haptics example.
 @MainActor
@@ -198,25 +197,5 @@ enum HapticSwiftExport {
         }
 
         """
-    }
-}
-
-/// Immutable UTF-8 snapshot; file serialization may run outside MainActor.
-nonisolated struct HapticSwiftDocument: FileDocument {
-    static var readableContentTypes: [UTType] { [.swiftSource] }
-    let source: String
-
-    init(source: String) { self.source = source }
-
-    init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents,
-              let source = String(data: data, encoding: .utf8) else {
-            throw CocoaError(.fileReadCorruptFile)
-        }
-        self.source = source
-    }
-
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        FileWrapper(regularFileWithContents: Data(source.utf8))
     }
 }

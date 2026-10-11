@@ -1,12 +1,12 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 struct CustomHapticsView: View {
     @Bindable var controller: HapticsController
     @State private var configuration: CustomHapticConfiguration
     @State private var presentedHelp: HapticHelpTopic?
-    @State private var exportDocument: HapticSwiftDocument?
-    @State private var isExporting = false
+    @State private var shareFile: HapticShareFile?
+    @State private var retainedShareFile: HapticShareFile?
+    @State private var shareCompletionError: String?
     @State private var exportError: String?
 
     init(controller: HapticsController) {
@@ -56,24 +56,6 @@ struct CustomHapticsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    do {
-                        exportDocument = HapticSwiftDocument(
-                            source: try HapticSwiftExport.source(for: configuration, capabilities: limits))
-                        isExporting = true
-                    } catch {
-                        exportError = error.localizedDescription
-                    }
-                } label: {
-                    Label("Export Swift code", systemImage: "square.and.arrow.up")
-                        .labelStyle(.iconOnly)
-                }
-                .foregroundStyle(validationMessage == nil ? Color.primary : Color.secondary)
-                .disabled(validationMessage != nil)
-                .accessibilityIdentifier("custom.export")
-                .accessibilityHint(validationMessage ?? "")
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
                     if controller.isPlaying {
                         controller.stop()
                     } else {
@@ -92,17 +74,45 @@ struct CustomHapticsView: View {
                 .accessibilityIdentifier(controller.isPlaying ? "custom.stop" : "custom.play")
                 .accessibilityHint(controller.isPlaying ? "" : (validationMessage ?? ""))
             }
+            ToolbarSpacer(.fixed, placement: .topBarTrailing)
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    do {
+                        exportError = nil
+                        shareCompletionError = nil
+                        let file = try HapticShareFile(
+                            source: HapticSwiftExport.source(for: configuration, capabilities: limits))
+                        retainedShareFile = file
+                        shareFile = file
+                    } catch {
+                        exportError = error.localizedDescription
+                    }
+                } label: {
+                    Label("Share Swift code", systemImage: "square.and.arrow.up")
+                        .labelStyle(.iconOnly)
+                }
+                .foregroundStyle(validationMessage == nil ? Color.primary : Color.secondary)
+                .disabled(validationMessage != nil)
+                .accessibilityIdentifier("custom.export")
+                .accessibilityHint(validationMessage ?? "")
+            }
         }
         .sheet(item: $presentedHelp) { topic in
             HapticHelpSheet(topic: topic)
         }
-        .fileExporter(isPresented: $isExporting, document: exportDocument,
-                      contentType: .swiftSource, defaultFilename: "CustomHaptic.swift") { result in
-            if case .failure(let error) = result {
-                exportError = error.localizedDescription
+        .sheet(item: $shareFile, onDismiss: {
+            // Retain the attachment through child presentations such as Save to Files.
+            try? retainedShareFile?.remove()
+            retainedShareFile = nil
+            exportError = shareCompletionError
+            shareCompletionError = nil
+        }) { file in
+            HapticShareSheet(file: file) { message in
+                shareCompletionError = message
+                shareFile = nil
             }
         }
-        .alert("Export unavailable", isPresented: Binding(
+        .alert("Sharing unavailable", isPresented: Binding(
             get: { exportError != nil },
             set: { if !$0 { exportError = nil } }
         )) {

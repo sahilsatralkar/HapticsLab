@@ -8,6 +8,27 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Native Swift file sharing — 11 October 2026
+
+Replaced the direct file-export dialog with UIKit's native activity sheet presented from SwiftUI. Share Swift code captures the current validated configuration into a real UTF-8 `CustomHaptic.swift` attachment, allowing compatible sharing apps and Save to Files. Each request has a unique temporary directory, so later exports cannot overwrite an in-flight attachment. The file remains retained through child activity presentations and is cleaned up when the share sheet dismisses, including cancellation. Preparation and activity errors use the Sharing unavailable alert. The generated SwiftUI/Core Haptics code, validation, separate toolbar groups, and Play/Stop handling remain unchanged. Removed the obsolete FileDocument implementation.
+
+Apple documentation for ShareLink, file sharing, UIActivityViewController, and its completion handler was reviewed through Xcode MCP. Review continued with the previously reviewed external exported SwiftUI guidance; no built-in Xcode skill was invoked. README remains deferred.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: seven affected tests passed, covering generated values/timing, invalid drafts, immutable file snapshots, UTF-8 contents and filename, independent share files, idempotent cleanup, preparation failures, and repeatable Stop. The independent-file/cleanup test also passed after adopting item-driven sheet presentation.
+- Final normal build succeeded with no reported errors or warnings after the attachment-retention refinement. Git whitespace check passed.
+- Share-sheet interaction, actual receipt by another app, Save to Files, cancellation UI, and compact/light/dark layouts remain unexecuted because of the previously recorded simulator-interaction limitation. No UI tests or dedicated accessibility checks were run. Hardware playback and iOS 26.0 minimum-runtime execution remain unverified. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-51-03-+0530.xcresult` (seven affected tests), `Test-HapticsLab-2026.10.11_14-51-54-+0530.xcresult` (cleanup follow-up), `BuildProject-Log-20261011-145242.txt` (final normal build). Temporary artifacts are not distributed.
+
+## Separate playback and export toolbar groups — 11 October 2026
+
+Moved Export/Share after Play/Stop in the trailing toolbar and separated the two items with native `ToolbarSpacer(.fixed, placement: .topBarTrailing)`. Apple documentation retrieved through Xcode MCP confirms fixed toolbar spacers divide Liquid Glass toolbar groups. No numeric spacing or custom background was added; button actions and validation remain unchanged. Review continued with the previously reviewed external exported SwiftUI guidance; no built-in Xcode skill was invoked. README remains deferred.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: export-snapshot and repeatable-Stop unit tests passed (2/2), followed by a successful normal build with no reported errors. Git whitespace check passed.
+- Toolbar appearance on compact/light/dark screens remains visually unverified because of the previously recorded simulator-interaction limitation. No UI tests or dedicated accessibility checks were run. Physical playback and iOS 26.0 minimum-runtime execution were not checked; no physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-46-22-+0530.xcresult`, `BuildProject-Log-20261011-144632.txt` (temporary, not distributed).
+
 ## Inline section information buttons — 11 October 2026
 
 Moved each information button directly after its section title (Haptics, Repetition, Envelope), with the flexible spacer after the button. Uses default HStack spacing and native vertical padding without numeric margins. Help content and presentation are unchanged. Review follows the previously reviewed external exported SwiftUI guidance; no built-in Xcode skill was invoked. README remains deferred.

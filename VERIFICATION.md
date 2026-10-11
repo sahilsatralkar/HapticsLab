@@ -1,5 +1,11 @@
 # Verification
 
+## Latest supplied screenshots — 11 October 2026
+
+Replaced the README Home and Custom images with the maintainer-supplied `IMG_3239.PNG` and `IMG_3240.PNG`, respectively. Both are unchanged 1206 × 2622 PNGs, verified byte-for-byte against the supplied files. Reviewed the attached images: Home shows the medium-weight body labels, all thirteen system choices, Custom navigation, device information, and Pencil footnote; Custom shows the top of the form. Updated README alt text and caption and removed the obsolete typography warning.
+
+README local links, anchors, image references, and Git whitespace checks passed. No app source changes, builds, tests, or device interactions were needed for this documentation-only update. Screenshots are visual evidence only, not verification of physical feedback. Existing local signing changes were preserved.
+
 ## System button typography — 11 October 2026
 
 Changed the shared System haptics button label from `.title3` to `.body.weight(.medium)` through Xcode MCP. All thirteen labels use the new style. Dynamic Type, natural wrapping, equal-height layout, and native padding are preserved. README now describes the style and identifies the supplied Home screenshot as predating this typography change.

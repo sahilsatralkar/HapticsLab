@@ -12,12 +12,12 @@ It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, 
     <th>Custom — Pattern controls</th>
   </tr>
   <tr>
-    <td><img src="Docs/Screenshots/home.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons, including Alignment and Path complete marked with asterisks"></td>
+    <td><img src="Docs/Screenshots/home.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons using medium-weight body text, Custom navigation, device information, and the Apple Pencil Pro footnote"></td>
     <td><img src="Docs/Screenshots/custom.png" width="300" alt="Custom screen with Play and Share, intensity and sharpness sliders, Continuous toggle, Repetitions, and the beginning of the Envelope controls"></td>
   </tr>
 </table>
 
-These screenshots were supplied by the maintainer and show light appearance. The Home screenshot predates the change to body text with medium weight on System haptics buttons. On Home, scroll down to reach Custom, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
+These latest screenshots were supplied by the maintainer and show light appearance. Home shows all thirteen System haptics buttons with the updated typography, the Custom navigation row, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
 
 ## Contents
 

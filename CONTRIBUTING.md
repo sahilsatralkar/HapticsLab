@@ -2,6 +2,8 @@
 
 Contributions are welcome through focused pull requests. Start with [README.md](README.md) for setup, features, and the source map. Keep changes native and dependency-free, preserving iOS/iPadOS 26.0 and Swift 6 support.
 
+Use the [community issue template](.github/ISSUE_TEMPLATE/community_issue.md) for bugs, feature requests, and documentation suggestions. The [pull request template](.github/pull_request_template.md) prompts you for a summary and local verification results. Complete only the sections relevant to your change.
+
 ## Contribution workflow
 
 1. Fork the repository and create a branch for your change. For substantial features or behavior changes, discuss the scope in an issue before implementation.

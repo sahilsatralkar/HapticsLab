@@ -8,6 +8,28 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Unified Play and Stop button — 11 October 2026
+
+The Custom toolbar uses one button: `play.fill` starts playback while idle; `stop.fill` calls the existing stop action during startup or playback. Removed the separate Stop section. Stop remains enabled regardless of draft validation, with the corresponding accessible label and identifier. Existing completion, cancellation, interruption, and screen/background handling remain unchanged. README remains deferred. SwiftUI review continued with the previously reviewed external exported guidance above; no locally exposed built-in Xcode skill was invoked.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: repeatable Stop and immutable configuration-snapshot unit tests passed (2/2). These cover controller/model behavior, not live toolbar interaction.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed. No UI tests were added or run.
+- Live Play/Stop transitions and physical vibration were not checked on hardware. Compact/light/dark/accessibility visual checks remain unexecuted because of the previously recorded simulator-interaction blocker, which was not retried. iOS 26.0 minimum-runtime execution remains unverified. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-29-46-+0530.xcresult`, `BuildProject-Log-20261011-142956.txt` (temporary, not distributed).
+
+## Section information buttons — 11 October 2026
+
+Replaced the Haptics, Repetition, and Envelope footers with an accessible information button in each section header. A single item-driven native sheet presents the selected section's unchanged explanation with its title, a Done button, and scrollable text. It offers medium/large sheet sizes and uses the large size for accessibility Dynamic Type categories. Controls remain visible; help state is independent of parameter values. Semantic styling, native `.padding()`, and existing playback safeguards are preserved. README remains deferred.
+
+SwiftUI review continued with the previously reviewed external exported guidance above; no locally exposed built-in Xcode skill was invoked. Xcode MCP documentation review covered native sheet presentation configuration.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: existing configuration-snapshot and envelope-mapping unit tests passed (2/2). These tests cover model behavior, not sheet interaction.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed. No UI tests were added or run.
+- Sheet opening/dismissal and compact/light/dark/accessibility visual checks were not executed. The simulator-selection blocker reported during the preceding screen review was not retried. Physical vibration and iOS 26.0 minimum-runtime execution remain unverified. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-27-50-+0530.xcresult`, `BuildProject-Log-20261011-142807.txt` (temporary, not distributed).
+
 ## Envelope order and guidance — 11 October 2026
 
 Reordered Envelope to Sustained, Attack time, then Release time when sustained or Decay time otherwise. Replaced its footer with the agreed explanation for new testers, including relative values and changing one control at a time. Device capability handling, parameter bindings, native spacing, and playback behavior are unchanged. Review continued with the previously reviewed external exported SwiftUI guidance above; no locally exposed built-in Xcode skill was invoked. Apple envelope descriptions and normalized-value semantics were confirmed through Xcode MCP DocumentationSearch during the preceding copy review. README remains deferred.

@@ -3,6 +3,7 @@ import SwiftUI
 struct CustomHapticsView: View {
     @Bindable var controller: HapticsController
     @State private var configuration: CustomHapticConfiguration
+    @State private var presentedHelp: HapticHelpTopic?
 
     init(controller: HapticsController) {
         self.controller = controller
@@ -34,20 +35,10 @@ struct CustomHapticsView: View {
                     }
                 }
             } header: {
-                Text("Haptics")
-            } footer: {
-                Text("Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps.")
+                HapticSectionHeader(topic: .haptics, presentedHelp: $presentedHelp)
             }
-            HapticRepetitionSection(configuration: $configuration)
-            HapticEnvelopeSection(configuration: $configuration, limits: limits)
-            if controller.isPlaying {
-                Section {
-                    Button("Stop", action: controller.stop)
-                        .buttonStyle(.bordered)
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("custom.stop")
-                }
-            }
+            HapticRepetitionSection(configuration: $configuration, presentedHelp: $presentedHelp)
+            HapticEnvelopeSection(configuration: $configuration, limits: limits, presentedHelp: $presentedHelp)
             Section {
                 Button("Reset parameters") {
                     configuration = .defaults
@@ -61,16 +52,27 @@ struct CustomHapticsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    controller.playCustom(configuration)
+                    if controller.isPlaying {
+                        controller.stop()
+                    } else {
+                        controller.playCustom(configuration)
+                    }
                 } label: {
-                    Label("Play custom haptic", systemImage: "play.fill")
-                        .labelStyle(.iconOnly)
+                    if controller.isPlaying {
+                        Label("Stop custom haptic", systemImage: "stop.fill")
+                    } else {
+                        Label("Play custom haptic", systemImage: "play.fill")
+                    }
                 }
-                .foregroundStyle(playDisabled ? Color.secondary : Color.primary)
-                .disabled(playDisabled)
-                .accessibilityIdentifier("custom.play")
-                .accessibilityHint(validationMessage ?? "")
+                .labelStyle(.iconOnly)
+                .foregroundStyle(playbackButtonDisabled ? Color.secondary : Color.primary)
+                .disabled(playbackButtonDisabled)
+                .accessibilityIdentifier(controller.isPlaying ? "custom.stop" : "custom.play")
+                .accessibilityHint(controller.isPlaying ? "" : (validationMessage ?? ""))
             }
+        }
+        .sheet(item: $presentedHelp) { topic in
+            HapticHelpSheet(topic: topic)
         }
         .onDisappear { controller.stop() }
         .alert("Playback unavailable", isPresented: Binding(
@@ -83,8 +85,8 @@ struct CustomHapticsView: View {
         }
     }
 
-    private var playDisabled: Bool {
-        controller.isPlaying || (controller.supportsCustomHaptics && validationMessage != nil)
+    private var playbackButtonDisabled: Bool {
+        !controller.isPlaying && controller.supportsCustomHaptics && validationMessage != nil
     }
 
     private var validationMessage: String? {
@@ -96,9 +98,94 @@ struct CustomHapticsView: View {
     }
 }
 
+private enum HapticHelpTopic: String, Identifiable {
+    case haptics, repetition, envelope
+
+    var id: Self { self }
+
+    var title: LocalizedStringResource {
+        switch self {
+        case .haptics: "Haptics"
+        case .repetition: "Repetition"
+        case .envelope: "Envelope"
+        }
+    }
+
+    var informationLabel: LocalizedStringResource {
+        switch self {
+        case .haptics: "About Haptics"
+        case .repetition: "About Repetition"
+        case .envelope: "About Envelope"
+        }
+    }
+
+    var explanation: LocalizedStringResource {
+        switch self {
+        case .haptics:
+            "Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps."
+        case .repetition:
+            "Choose how many times the haptic plays. For a single vibration, leave Repetitions at 1. Increase it to test a repeating pattern, then adjust Gap to change the spacing between vibrations."
+        case .envelope:
+            "Shape how each vibration builds and fades. Attack time controls how gradually it reaches the selected intensity. With Sustained on, the vibration holds its strength before fading with Release time. With Sustained off, it fades with Decay time. Higher values make the rise or fade longer. These values are relative, not seconds. Change one control at a time and press Play to compare."
+        }
+    }
+}
+
+private struct HapticSectionHeader: View {
+    let topic: HapticHelpTopic
+    @Binding var presentedHelp: HapticHelpTopic?
+
+    var body: some View {
+        HStack {
+            Text(topic.title)
+            Spacer()
+            Button {
+                presentedHelp = topic
+            } label: {
+                Image(systemName: "info.circle")
+                    .font(.body)
+                    .padding()
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.primary)
+            .accessibilityLabel(Text(topic.informationLabel))
+            .accessibilityIdentifier("custom.info." + topic.rawValue)
+        }
+        .textCase(nil)
+    }
+}
+
+private struct HapticHelpSheet: View {
+    let topic: HapticHelpTopic
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                Text(topic.explanation)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+            }
+            .navigationTitle(Text(topic.title))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                        .accessibilityIdentifier("custom.info.done")
+                }
+            }
+        }
+        .presentationDetents(dynamicTypeSize.isAccessibilitySize ? [.large] : [.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+}
+
 private struct HapticEnvelopeSection: View {
     @Binding var configuration: CustomHapticConfiguration
     let limits: HapticEventCapabilities
+    @Binding var presentedHelp: HapticHelpTopic?
 
     var body: some View {
         Section {
@@ -116,9 +203,7 @@ private struct HapticEnvelopeSection: View {
                 HapticParameterControl(parameter: .decay, configuration: $configuration, limits: limits)
             }
         } header: {
-            Text("Envelope")
-        } footer: {
-            Text("Shape how each vibration builds and fades. Attack time controls how gradually it reaches the selected intensity. With Sustained on, the vibration holds its strength before fading with Release time. With Sustained off, it fades with Decay time. Higher values make the rise or fade longer. These values are relative, not seconds. Change one control at a time and press Play to compare.")
+            HapticSectionHeader(topic: .envelope, presentedHelp: $presentedHelp)
         }
     }
 }
@@ -147,6 +232,7 @@ private struct HapticParameterControl: View {
 
 private struct HapticRepetitionSection: View {
     @Binding var configuration: CustomHapticConfiguration
+    @Binding var presentedHelp: HapticHelpTopic?
 
     var body: some View {
         Section {
@@ -159,9 +245,7 @@ private struct HapticRepetitionSection: View {
                                   identifier: "custom.gap", seconds: true)
             }
         } header: {
-            Text("Repetition")
-        } footer: {
-            Text("Choose how many times the haptic plays. For a single vibration, leave Repetitions at 1. Increase it to test a repeating pattern, then adjust Gap to change the spacing between vibrations.")
+            HapticSectionHeader(topic: .repetition, presentedHelp: $presentedHelp)
         }
     }
 }

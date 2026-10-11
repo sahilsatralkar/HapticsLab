@@ -37,24 +37,42 @@ final class HapticsLabUITests: XCTestCase {
         reveal(app.buttons["haptics.custom"], in: app)
         app.buttons["haptics.custom"].tap()
         XCTAssertTrue(app.navigationBars["Custom haptics"].waitForExistence(timeout: 5))
+        var originalValues: [String: String] = [:]
         for name in ["intensity", "sharpness"] {
             let slider = app.sliders["custom." + name]
             if slider.exists {
                 slider.adjust(toNormalizedSliderPosition: 0.237)
+                originalValues[name] = slider.value as? String
             } else {
                 XCTAssertTrue(app.otherElements["custom.unavailable." + name].exists ||
                               app.staticTexts["custom.unavailable." + name].exists)
             }
         }
         XCTAssertFalse(app.segmentedControls["custom.kind"].exists)
+        let continuous = app.switches["custom.continuous"]
         let duration = app.sliders["custom.duration"]
+        XCTAssertFalse(duration.exists)
+        reveal(continuous, in: app)
+        XCTAssertEqual(continuous.value as? String, "0")
+        continuous.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        XCTAssertEqual(continuous.value as? String, "1")
+        XCTAssertTrue(duration.waitForExistence(timeout: 5))
+        for (name, value) in originalValues {
+            XCTAssertEqual(app.sliders["custom." + name].value as? String, value)
+        }
         reveal(duration, in: app)
+        XCTAssertGreaterThan(duration.frame.midY, continuous.frame.midY)
         let initialDuration = duration.value as? String
         XCTAssertNotNil(initialDuration)
         duration.adjust(toNormalizedSliderPosition: 0.237)
-        XCTAssertNotEqual(duration.value as? String, initialDuration)
-        duration.adjust(toNormalizedSliderPosition: 0)
-        XCTAssertEqual(duration.value as? String, initialDuration)
+        let rememberedDuration = duration.value as? String
+        XCTAssertNotEqual(rememberedDuration, initialDuration)
+        reveal(continuous, in: app)
+        continuous.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        XCTAssertFalse(duration.exists)
+        continuous.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        reveal(duration, in: app)
+        XCTAssertEqual(duration.value as? String, rememberedDuration)
         duration.adjust(toNormalizedSliderPosition: 1)
         XCTAssertNotEqual(duration.value as? String, initialDuration)
         let play = app.navigationBars["Custom haptics"].buttons["custom.play"]
@@ -72,13 +90,16 @@ final class HapticsLabUITests: XCTestCase {
         #endif
         reveal(app.buttons["custom.reset"], in: app)
         app.buttons["custom.reset"].tap()
-        // Duration is the first row; a Form can remove offscreen rows from its accessibility tree.
+        // Return to the Haptics section; Form may remove offscreen accessibility elements.
         for _ in 0..<12 {
-            if duration.exists && duration.isHittable && app.windows.firstMatch.frame.contains(duration.frame) { break }
+            if continuous.exists && continuous.isHittable && app.windows.firstMatch.frame.contains(continuous.frame) { break }
             app.swipeDown()
         }
+        reveal(continuous, in: app)
+        XCTAssertEqual(continuous.value as? String, "0")
+        XCTAssertFalse(duration.exists)
+        continuous.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         reveal(duration, in: app)
-        XCTAssertTrue(duration.exists)
         XCTAssertEqual(duration.value as? String, initialDuration)
         attach(app, "Custom parameters")
     }
@@ -123,6 +144,13 @@ final class HapticsLabUITests: XCTestCase {
             custom.tap()
             XCTAssertTrue(app.navigationBars["Custom haptics"].waitForExistence(timeout: 5))
             XCTAssertFalse(app.segmentedControls["custom.kind"].exists)
+            XCTAssertFalse(app.sliders["custom.duration"].exists)
+            let continuous = app.switches["custom.continuous"]
+            reveal(continuous, in: app)
+            attach(app, "Custom-tap-" + appearance + "-" + size)
+            continuous.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+            XCTAssertEqual(continuous.value as? String, "1")
+            XCTAssertTrue(app.sliders["custom.duration"].waitForExistence(timeout: 5))
             reveal(app.sliders["custom.duration"], in: app)
             XCTAssertTrue(app.sliders["custom.duration"].isHittable)
             attach(app, "Custom-duration-" + appearance + "-" + size)

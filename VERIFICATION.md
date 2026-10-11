@@ -8,6 +8,21 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Haptics section and Continuous toggle — 11 October 2026
+
+The first Custom section is now titled “Haptics”, ordered Intensity, Sharpness, Continuous, then Duration only while Continuous is enabled. Continuous defaults off; its remembered duration starts at 0.2 seconds and supports smooth adjustment through the existing 30-second maximum. The toggle independently selects native transient/continuous event types. Zero duration is rejected for continuous playback and displays an inline explanation; it no longer selects a tap. Turning Continuous off preserves duration while scheduling zero-duration transient events. Reset turns Continuous off and restores 0.2 seconds.
+
+Mode switching preserves parameter values valid for the selected event's device-reported ranges. Finite values outside a newly selected range use that range's default, as explained in the section footer; nonfinite values remain invalid and are never silently repaired. Native padding, other sections, and playback lifecycle protections are unchanged. SwiftUI review continued with the previously reviewed external exported guidance above; no locally exposed built-in Xcode skill was invoked. README remains deferred at the user's request.
+
+Current-change checks through Xcode MCP on iPhone 13 mini simulator, iOS 26.5:
+
+- Initial full suite: 15 passed, 2 failed. All 14 unit tests passed, including native event type/timing, remembered duration, valid-value preservation, new-range defaults, nonfinite rejection, and zero-duration rejection for continuous events. Native button UI coverage passed.
+- Both Custom UI checks initially failed to reveal Duration because the test's center tap did not activate the native switch. Changed the tests to tap the switch at the trailing side of its accessibility element and assert its on-state. Both targeted reruns passed, covering hidden/visible Duration, remembered values, Reset, toolbar playback/error feedback, and compact light/dark/largest-accessibility layouts. App code was unchanged after the full suite; passing tests were not repeated.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed.
+- Test screenshots were captured but not visually inspected. Physical vibration, hardware playback/Stop, and iOS 26.0 minimum-runtime execution remain unchecked. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_13-27-29-+0530.xcresult` (full suite), `Test-HapticsLab-2026.10.11_13-29-48-+0530.xcresult` (targeted UI rerun), `BuildProject-Log-20261011-133240.txt` (final normal build). Temporary artifacts are not distributed.
+
 ## Envelope terminology — 11 October 2026
 
 Renamed Attack, Decay, Release, and Sustain to “Attack time”, “Decay time”, “Release time”, and “Sustained”. Updated the envelope explanation and the fixed/unavailable Sustained label consistently. API mappings, values, native spacing, and playback behavior are unchanged. Review continued with the previously reviewed external exported SwiftUI guidance above; no locally exposed built-in Xcode skill was invoked. README remains deferred.

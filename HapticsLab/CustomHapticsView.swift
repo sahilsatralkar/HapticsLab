@@ -16,13 +16,27 @@ struct CustomHapticsView: View {
     var body: some View {
         Form {
             Section {
-                HapticValueSlider(title: "Duration", value: $configuration.duration,
-                                  range: 0...CustomHapticConfiguration.maximumContinuousDuration,
-                                  identifier: "custom.duration", seconds: true)
                 HapticParameterControl(parameter: .intensity, configuration: $configuration, limits: limits)
                 HapticParameterControl(parameter: .sharpness, configuration: $configuration, limits: limits)
+                Toggle("Continuous", isOn: Binding(
+                    get: { configuration.isContinuous },
+                    set: { configuration.setContinuous($0, using: controller.capabilities) }
+                ))
+                .accessibilityIdentifier("custom.continuous")
+                if configuration.isContinuous {
+                    HapticValueSlider(title: "Duration", value: $configuration.duration,
+                                      range: 0...CustomHapticConfiguration.maximumContinuousDuration,
+                                      identifier: "custom.duration", seconds: true)
+                    if configuration.duration == 0 {
+                        Text("Duration must be greater than 0.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } header: {
+                Text("Haptics")
             } footer: {
-                Text("A duration of 0 plays a tap; above 0 plays a continuous haptic. Switching between them resets parameters to this device’s defaults.")
+                Text("Continuous off plays a tap. Values outside the selected event’s range reset to device defaults.")
             }
             HapticEnvelopeSection(configuration: $configuration, limits: limits)
             HapticTimingSection(configuration: $configuration)
@@ -57,9 +71,6 @@ struct CustomHapticsView: View {
                 .accessibilityIdentifier("custom.play")
                 .accessibilityHint(validationMessage ?? "")
             }
-        }
-        .onChange(of: configuration.kind) { _, kind in
-            configuration.resetParameters(using: controller.capabilities.event(kind))
         }
         .onDisappear { controller.stop() }
         .alert("Playback unavailable", isPresented: Binding(

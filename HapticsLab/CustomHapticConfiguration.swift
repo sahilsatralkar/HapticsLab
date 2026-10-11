@@ -12,10 +12,10 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
     static let pulseRange = 1...8
     static let gapRange = 0.0...2.0
     static let defaults = Self(intensity: 0.65, sharpness: 0.35,
-                               duration: 0, pulseCount: 2, gap: 0.12)
+                               duration: 0.2, pulseCount: 2, gap: 0.12)
 
-    // Zero selects a transient event; positive durations select continuous events.
-    var kind: EventKind { duration == 0 ? .transient : .continuous }
+    var isContinuous = false
+    var kind: EventKind { isContinuous ? .continuous : .transient }
     var intensity: Double
     var sharpness: Double
     var duration: Double
@@ -60,6 +60,18 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
         }
     }
 
+    mutating func setContinuous(_ enabled: Bool, using capabilities: HapticCapabilities) {
+        guard enabled != isContinuous else { return }
+        isContinuous = enabled
+        let limits = capabilities.event(kind)
+        for parameter in HapticParameter.allCases {
+            let current = value(for: parameter)
+            if current.isFinite, let range = limits.ranges[parameter], !range.contains(current) {
+                set(range.defaultValue, for: parameter)
+            }
+        }
+    }
+
     struct Event: Equatable, Sendable {
         let time: Double
         let duration: Double
@@ -70,7 +82,7 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
         var errorDescription: String? {
             switch self {
             case .invalidParameters:
-                "Use finite values, a duration from 0 to 30 seconds, 1 to 8 pulses, and a gap from 0 to 2 seconds."
+                "Use finite values, a continuous duration above 0 and up to 30 seconds, 1 to 8 pulses, and a gap from 0 to 2 seconds."
             case .invalidCapabilities:
                 "The device returned invalid parameter limits."
             case .unavailableParameter:
@@ -84,11 +96,13 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
     func events() throws -> [Event] {
         guard HapticParameter.allCases.allSatisfy({ value(for: $0).isFinite }),
               duration.isFinite, duration >= 0, duration <= Self.maximumContinuousDuration,
+              !isContinuous || duration > 0,
               Self.pulseRange.contains(pulseCount), Self.gapRange.contains(gap), gap.isFinite else {
             throw ValidationError.invalidParameters
         }
+        let eventDuration = isContinuous ? duration : 0
         return (0..<pulseCount).map {
-            Event(time: Double($0) * (duration + gap), duration: duration)
+            Event(time: Double($0) * (eventDuration + gap), duration: eventDuration)
         }
     }
 }

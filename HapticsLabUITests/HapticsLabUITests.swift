@@ -36,7 +36,7 @@ final class HapticsLabUITests: XCTestCase {
         defer { app.terminate() }
         reveal(app.buttons["haptics.custom"], in: app)
         app.buttons["haptics.custom"].tap()
-        XCTAssertTrue(app.navigationBars["Custom"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Custom haptics"].waitForExistence(timeout: 5))
         for name in ["intensity", "sharpness"] {
             let slider = app.sliders["custom." + name]
             if slider.exists {
@@ -46,10 +46,15 @@ final class HapticsLabUITests: XCTestCase {
                               app.staticTexts["custom.unavailable." + name].exists)
             }
         }
-        app.segmentedControls["custom.kind"].buttons["Continuous"].tap()
+        XCTAssertFalse(app.segmentedControls["custom.kind"].exists)
         let duration = app.sliders["custom.duration"]
         reveal(duration, in: app)
         let initialDuration = duration.value as? String
+        XCTAssertNotNil(initialDuration)
+        duration.adjust(toNormalizedSliderPosition: 0.237)
+        XCTAssertNotEqual(duration.value as? String, initialDuration)
+        duration.adjust(toNormalizedSliderPosition: 0)
+        XCTAssertEqual(duration.value as? String, initialDuration)
         duration.adjust(toNormalizedSliderPosition: 1)
         XCTAssertNotEqual(duration.value as? String, initialDuration)
         reveal(app.buttons["custom.play"], in: app)
@@ -60,7 +65,14 @@ final class HapticsLabUITests: XCTestCase {
         #endif
         reveal(app.buttons["custom.reset"], in: app)
         app.buttons["custom.reset"].tap()
-        XCTAssertFalse(app.sliders["custom.duration"].exists)
+        // Duration is the first row; a Form can remove offscreen rows from its accessibility tree.
+        for _ in 0..<12 {
+            if duration.exists && duration.isHittable && app.windows.firstMatch.frame.contains(duration.frame) { break }
+            app.swipeDown()
+        }
+        reveal(duration, in: app)
+        XCTAssertTrue(duration.exists)
+        XCTAssertEqual(duration.value as? String, initialDuration)
         attach(app, "Custom parameters")
     }
 
@@ -102,6 +114,11 @@ final class HapticsLabUITests: XCTestCase {
             attach(app, "Haptics-bottom-" + appearance + "-" + size)
             reveal(custom, in: app)
             custom.tap()
+            XCTAssertTrue(app.navigationBars["Custom haptics"].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.segmentedControls["custom.kind"].exists)
+            reveal(app.sliders["custom.duration"], in: app)
+            XCTAssertTrue(app.sliders["custom.duration"].isHittable)
+            attach(app, "Custom-duration-" + appearance + "-" + size)
             reveal(app.buttons["custom.play"], in: app)
             XCTAssertTrue(app.buttons["custom.play"].isHittable)
             attach(app, "Custom-" + appearance + "-" + size)
@@ -128,7 +145,8 @@ final class HapticsLabUITests: XCTestCase {
                 app.swipeUp()
             }
         }
-        XCTAssertTrue(element.exists && element.isHittable && window.frame.contains(element.frame))
+        XCTAssertTrue(element.exists && element.isHittable && window.frame.contains(element.frame),
+                      "Could not reveal \(element.identifier)")
     }
 
     private func attach(_ app: XCUIApplication, _ name: String) {

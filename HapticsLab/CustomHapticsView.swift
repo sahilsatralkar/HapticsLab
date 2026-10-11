@@ -16,17 +16,13 @@ struct CustomHapticsView: View {
     var body: some View {
         Form {
             Section {
-                Picker("Event", selection: $configuration.kind) {
-                    ForEach(CustomHapticConfiguration.EventKind.allCases) { kind in
-                        Text(kind.title).tag(kind)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .accessibilityIdentifier("custom.kind")
+                HapticValueSlider(title: "Duration", value: $configuration.duration,
+                                  range: 0...CustomHapticConfiguration.maximumContinuousDuration,
+                                  identifier: "custom.duration", seconds: true)
                 HapticParameterControl(parameter: .intensity, configuration: $configuration, limits: limits)
                 HapticParameterControl(parameter: .sharpness, configuration: $configuration, limits: limits)
             } footer: {
-                Text("Ranges and reset values come from this device. Changing the event resets its parameters.")
+                Text("A duration of 0 plays a tap; above 0 plays a continuous haptic. Switching between them resets parameters to this device’s defaults.")
             }
             HapticEnvelopeSection(configuration: $configuration, limits: limits)
             HapticTimingSection(configuration: $configuration)
@@ -66,7 +62,7 @@ struct CustomHapticsView: View {
             }
         }
         .buttonBorderShape(.roundedRectangle(radius: 12))
-        .navigationTitle("Custom")
+        .navigationTitle("Custom haptics")
         .onChange(of: configuration.kind) { _, kind in
             configuration.resetParameters(using: controller.capabilities.event(kind))
         }
@@ -136,11 +132,6 @@ private struct HapticTimingSection: View {
 
     var body: some View {
         Section {
-            if configuration.kind == .continuous {
-                HapticValueSlider(title: "Duration", value: $configuration.duration,
-                                  range: 0...CustomHapticConfiguration.maximumContinuousDuration,
-                                  identifier: "custom.duration", seconds: true)
-            }
             Stepper("Pulses: \(configuration.pulseCount)", value: $configuration.pulseCount,
                     in: CustomHapticConfiguration.pulseRange)
                 .accessibilityIdentifier("custom.pulses")
@@ -150,7 +141,7 @@ private struct HapticTimingSection: View {
         } header: {
             Text("Timing")
         } footer: {
-            Text("Continuous duration must be above zero, up to the Core Haptics limit of 30 seconds per event. This app allows 1–8 pulses and 0–2 seconds between scheduled events. A release tail can overlap that gap.")
+            Text("Core Haptics allows up to 30 seconds per continuous event. This app allows 1–8 pulses and 0–2 seconds between scheduled events. A release tail can overlap that gap.")
         }
     }
 }

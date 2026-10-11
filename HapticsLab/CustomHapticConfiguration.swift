@@ -2,10 +2,8 @@ import Foundation
 
 /// A value snapshot captured by Play. Envelope values are normalized, not seconds.
 nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
-    enum EventKind: String, CaseIterable, Identifiable, Sendable {
+    enum EventKind: String, CaseIterable, Sendable {
         case transient, continuous
-        var id: Self { self }
-        var title: LocalizedStringResource { self == .transient ? "Tap" : "Continuous" }
     }
 
     // Core Haptics documents 30 seconds per continuous event. No device-specific
@@ -13,10 +11,11 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
     static let maximumContinuousDuration = 30.0
     static let pulseRange = 1...8
     static let gapRange = 0.0...2.0
-    static let defaults = Self(kind: .transient, intensity: 0.65, sharpness: 0.35,
-                               duration: 0.20, pulseCount: 2, gap: 0.12)
+    static let defaults = Self(intensity: 0.65, sharpness: 0.35,
+                               duration: 0, pulseCount: 2, gap: 0.12)
 
-    var kind: EventKind
+    // Zero selects a transient event; positive durations select continuous events.
+    var kind: EventKind { duration == 0 ? .transient : .continuous }
     var intensity: Double
     var sharpness: Double
     var duration: Double
@@ -71,7 +70,7 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
         var errorDescription: String? {
             switch self {
             case .invalidParameters:
-                "Use finite values, a duration above 0 and up to 30 seconds, 1 to 8 pulses, and a gap from 0 to 2 seconds."
+                "Use finite values, a duration from 0 to 30 seconds, 1 to 8 pulses, and a gap from 0 to 2 seconds."
             case .invalidCapabilities:
                 "The device returned invalid parameter limits."
             case .unavailableParameter:
@@ -84,13 +83,12 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
 
     func events() throws -> [Event] {
         guard HapticParameter.allCases.allSatisfy({ value(for: $0).isFinite }),
-              duration.isFinite, duration > 0, duration <= Self.maximumContinuousDuration,
+              duration.isFinite, duration >= 0, duration <= Self.maximumContinuousDuration,
               Self.pulseRange.contains(pulseCount), Self.gapRange.contains(gap), gap.isFinite else {
             throw ValidationError.invalidParameters
         }
-        let pulseDuration = kind == .continuous ? duration : 0
         return (0..<pulseCount).map {
-            Event(time: Double($0) * (pulseDuration + gap), duration: pulseDuration)
+            Event(time: Double($0) * (duration + gap), duration: duration)
         }
     }
 }

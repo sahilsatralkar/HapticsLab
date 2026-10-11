@@ -8,6 +8,21 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Custom duration and title — 11 October 2026
+
+Renamed the navigation title to “Custom haptics” and replaced the Tap/Continuous picker with an always-visible, smooth Duration slider. At the user's direction, zero selects a native transient event; positive values select a continuous event up to the existing 30-second limit. Reset returns duration to zero. Switching event types retains device-specific parameter defaults/ranges. Negative, nonfinite, and out-of-range durations remain rejected. Native padding and playback cancellation/lifecycle handling are preserved. README remains deferred.
+
+SwiftUI review used the external exported guidance identified above, not a locally exposed built-in Xcode skill. Xcode MCP source inspection confirmed mappings for Intensity (`hapticIntensity`), Sharpness (`hapticSharpness`), Attack (`attackTime`), Sustain (`sustained`), Decay (`decayTime`), Release (`releaseTime`), and Duration (`CHHapticEvent.duration`). Pulses and Gap are app-defined repetition/spacing labels. A fresh Apple documentation confirmation is blocked because the current Xcode MCP tool set does not expose documentation search; no shell or web substitute was used.
+
+Current-change checks through Xcode MCP on iPhone 13 mini simulator, iOS 26.5:
+
+- Initial full suite: 15 passed, 1 failed. All 13 unit tests passed, including zero/positive/zero native event-type mapping, fractional duration preservation, the 30-second boundary, envelopes, and invalid-value rejection. Native-button and compact light/dark/largest-accessibility layout UI tests passed.
+- The Custom controls UI test failed in its scroll helper after Reset. Updated that test to scroll upward to the first-row Duration control, including when Form removes offscreen rows from the accessibility tree. Its targeted rerun passed, covering smooth adjustment, return to zero, maximum duration, simulator feedback, and reset. No app code changed after the full run, and the other passing tests were not repeated.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed.
+- UI screenshots were captured as test attachments but were not visually inspected. Physical vibration and iOS 26.0 minimum-runtime execution remain unverified. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_12-10-22-+0530.xcresult` (full suite), `Test-HapticsLab-2026.10.11_12-13-32-+0530.xcresult` (targeted rerun), `BuildProject-Log-20261011-121439.txt` (final normal build). Temporary artifacts are not distributed. The earlier title-only two-test run also passed, but the results above cover the final implementation.
+
 ## Remove Alignment — 10 October 2026
 
 Removed the Alignment enum case, label, symbol mapping, and feedback mapping, leaving 11 native haptic choices. The capability study now distinguishes the documented iOS/macOS availability of alignment from confirmed iPhone vibration, noting Apple's Pencil canvas guidance and the user's hardware observation. README remains deferred. SwiftUI review continued with the external guidance referenced above; the existing two-column layout handles the odd button count without fixed sizes or padding changes.

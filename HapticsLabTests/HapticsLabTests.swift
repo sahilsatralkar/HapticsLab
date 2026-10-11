@@ -19,9 +19,22 @@ final class HapticsLabTests: XCTestCase {
         XCTAssertTrue(events.allSatisfy { $0.duration == 0 })
     }
 
+    func testDurationSelectsNativeEventTypeAndReturnsToTap() throws {
+        var configuration = CustomHapticConfiguration.defaults
+        let limits = try referenceCapabilities()
+        for duration in [0.0, 0.000001, 0.123456, 30.0, 0.0] {
+            configuration.duration = duration
+            let events = try HapticsController.hapticEvents(configuration, capabilities: limits)
+            let expectedType: CHHapticEvent.EventType = duration == 0 ? .hapticTransient : .hapticContinuous
+            XCTAssertTrue(events.allSatisfy { $0.type == expectedType })
+            XCTAssertTrue(events.allSatisfy { $0.duration == duration })
+            XCTAssertEqual(events[1].relativeTime, duration + configuration.gap, accuracy: 0.0000001)
+            _ = try HapticsController.pattern(configuration, capabilities: limits)
+        }
+    }
+
     func testContinuousPulsesIncludeDurationAndGap() throws {
         var configuration = CustomHapticConfiguration.defaults
-        configuration.kind = .continuous
         configuration.duration = 0.4
         configuration.gap = 0.15
         configuration.pulseCount = 3
@@ -48,7 +61,7 @@ final class HapticsLabTests: XCTestCase {
             configuration.pulseCount = count
             XCTAssertThrowsError(try configuration.events())
         }
-        for value in [0, -1, 30.001, Double.nan, Double.infinity] {
+        for value in [-1, 30.001, Double.nan, Double.infinity] {
             var configuration = CustomHapticConfiguration.defaults
             configuration.duration = value
             XCTAssertThrowsError(try configuration.events())
@@ -62,7 +75,6 @@ final class HapticsLabTests: XCTestCase {
 
     func testFullContinuousDurationAndZeroGapAreAccepted() throws {
         var configuration = CustomHapticConfiguration.defaults
-        configuration.kind = .continuous
         configuration.duration = 30
         configuration.gap = 0
         configuration.pulseCount = 1
@@ -89,7 +101,7 @@ final class HapticsLabTests: XCTestCase {
 
     func testEnvelopeMapsAttackDecayReleaseAndSustain() throws {
         var configuration = CustomHapticConfiguration.defaults
-        configuration.kind = .continuous
+        configuration.duration = 0.2
         configuration.attack = 0.234
         configuration.decay = 0.456
         configuration.release = 0.678

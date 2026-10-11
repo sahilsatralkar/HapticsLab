@@ -45,7 +45,7 @@ struct CustomHapticsView: View {
             HapticRepetitionSection(configuration: $configuration, presentedHelp: $presentedHelp)
             HapticEnvelopeSection(configuration: $configuration, limits: limits, presentedHelp: $presentedHelp)
             Section {
-                Button("Reset parameter to default", action: controller.resetCustomConfiguration)
+                Button("Reset to defaults", action: controller.resetCustomConfiguration)
                     .accessibilityIdentifier("custom.reset")
             }
         }

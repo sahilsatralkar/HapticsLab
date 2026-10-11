@@ -1,5 +1,9 @@
 # Verification
 
+## Reset label — 11 October 2026
+
+Changed the Custom haptics button label to `Reset to defaults` through Xcode MCP. Normal build succeeded with no reported errors on the existing iPhone 13 mini / iOS 26.5 simulator destination. This copy-only change affects no unit-tested behavior; unit and UI tests were not run. Visual, physical-device, and iOS 26.0 minimum-runtime checks were not run. The native Button and its action remain unchanged, consistent with the previously reviewed external exported SwiftUI guidance; no built-in skill was invoked. README remains deferred.
+
 Date: 10 October 2026. Source, tests, project settings, builds, and simulator test execution were handled through Xcode MCP.
 
 ## API and skill review

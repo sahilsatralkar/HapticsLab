@@ -1,5 +1,13 @@
 # Verification
 
+## README and supplied screenshots — 11 October 2026
+
+Rewrote README against the current source inspected through Xcode MCP: eleven native choices, current Custom sections, exact numeric editing, retained drafts, Reset, capabilities and limits, Play/Stop, and Swift file sharing. Added setup, source mapping, unit coverage, reuse, and AI-agent guidance. Removed obsolete Canvas/UI-test links and old slider/timing descriptions. Other contribution documents remain a separate follow-up, with their known drift identified in README.
+
+- Copied the maintainer-supplied Home and Custom PNGs into `Docs/Screenshots/home.png` and `Docs/Screenshots/custom.png` as documentation assets. Both are 1206 × 2622 and byte-for-byte identical to the supplied files. The Home image reports hardware identifier iPhone18,3 and iOS 27.0.1. Images were visually reviewed; their contents do not verify physical vibration or playback lifecycle.
+- Checked all 38 README relative links, image references, and local anchors; no missing destinations. Git whitespace check passed. Xcode MCP test discovery confirmed 27 enabled unit tests; tests were not executed for this documentation change.
+- Before the supplied screenshots arrived, the requested iPhone 13 mini interaction session failed device selection; an iPhone 17 Pro session required a device-interaction skill unavailable in this environment. Session closure was requested. Xcode preview captures used iPhone Duo / iOS 27.1 but are not included in the README. Temporary preview source was created and removed through Xcode MCP; no app-source changes remain. No normal build, UI tests, hardware installation, or physical/minimum-runtime validation was performed for this documentation update.
+
 ## System haptics section — 11 October 2026
 
 Added the native `System haptics` section header above the home button grid. The Custom navigation row remains in its own section with the existing device footer. No numeric padding or custom header styling was added. Source edits and verification used Xcode MCP; review followed the previously reviewed external exported SwiftUI guidance, not a built-in skill. README remains deferred.

@@ -50,7 +50,7 @@ struct CustomHapticsView: View {
             }
         }
         .buttonBorderShape(.roundedRectangle(radius: 12))
-        .navigationTitle("Custom haptics")
+        .navigationTitle("Custom")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

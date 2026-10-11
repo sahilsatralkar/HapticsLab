@@ -9,7 +9,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
+                Section("System haptics") {
                     HapticsGrid(controller: controller, onRequest: requestHaptic)
                         .buttonStyle(HapticButtonStyle())
                         .controlSize(.large)

@@ -1,5 +1,18 @@
 # Verification
 
+## System haptics section — 11 October 2026
+
+Added the native `System haptics` section header above the home button grid. The Custom navigation row remains in its own section with the existing device footer. No numeric padding or custom header styling was added. Source edits and verification used Xcode MCP; review followed the previously reviewed external exported SwiftUI guidance, not a built-in skill. README remains deferred.
+
+- Light and dark Xcode previews were rendered and inspected on the preview-selected iPhone Duo / iOS 27.1 destination; the header, button grid, Custom row, and device footer were visible.
+- Explicitly selected iPhone 13 mini simulator / iOS 26.5: existing repeated-native-request unit test passed, followed by a successful normal build. This unit test checks request behavior, not the section label.
+- Compact-screen visual review, accessibility text sizes, physical vibration, and iOS 26.0 minimum-runtime execution were not checked. No UI tests or physical-device installation were performed.
+- The prior Reset-label and Custom-title entries inferred the build destination from earlier state instead of checking it. Those builds succeeded, but their claimed iPhone 13 mini destination was not verified. The current simulator build covers both label changes as well.
+
+## Custom title — 11 October 2026
+
+Changed the custom screen navigation title to `Custom` through Xcode MCP. Normal build succeeded with no reported errors on the existing iPhone 13 mini / iOS 26.5 simulator destination. This copy-only change affects no unit-tested behavior; unit and UI tests were not run. Visual, physical-device, and iOS 26.0 minimum-runtime checks were not run. Native navigation remains consistent with the previously reviewed external exported SwiftUI guidance; no built-in skill was invoked. README remains deferred.
+
 ## Reset label — 11 October 2026
 
 Changed the Custom haptics button label to `Reset to defaults` through Xcode MCP. Normal build succeeded with no reported errors on the existing iPhone 13 mini / iOS 26.5 simulator destination. This copy-only change affects no unit-tested behavior; unit and UI tests were not run. Visual, physical-device, and iOS 26.0 minimum-runtime checks were not run. The native Button and its action remain unchanged, consistent with the previously reviewed external exported SwiftUI guidance; no built-in skill was invoked. README remains deferred.

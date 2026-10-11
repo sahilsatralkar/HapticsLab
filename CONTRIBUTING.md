@@ -10,7 +10,7 @@ Use the [community issue template](.github/ISSUE_TEMPLATE/community_issue.md) fo
 2. Make a focused change and update relevant documentation. Preserve unrelated work and keep personal signing settings local.
 3. Perform the applicable local verification below and record the results in your pull request.
 4. Open a pull request targeting upstream `main`, explaining the problem and resulting behavior. Address review feedback and repeat affected checks when the code changes.
-5. The repository owner, `sahilsatralkar`, reviews contributions and controls updates and merges into upstream `main`. Contributors should not push directly to that branch.
+5. The repository owner, `sahilsatralkar`, reviews and merges contributions. GitHub blocks other users from pushing or merging into upstream `main`; submit your changes through a PR.
 
 ## Manual verification — no GitHub Actions required
 
@@ -40,7 +40,9 @@ For documentation-only changes, review the content, relative links, image refere
 
 Before merging an app change, the maintainer reviews the final revision, runs affected unit tests and a normal build locally, and performs relevant manual checks. Hardware-dependent changes need appropriate device verification or an explicitly recorded limitation accepted by the maintainer. Documentation-only PRs use the documentation checks above. If the PR changes after verification, repeat the checks affected by those changes.
 
-Owner-only merging is a repository access policy separate from GitHub Actions. Documentation does not enforce GitHub permissions; branch rules must be configured and verified separately. Do not add Actions workflows or require CI status checks unless the maintainer explicitly requests a change to this manual workflow.
+The active [Owner-only main updates ruleset](https://github.com/sahilsatralkar/HapticsLab/rules/24876927) applies to `main`, with **sahilsatralkar** as its only bypass user. Only the owner can push, merge, delete, or recreate that branch. You can still submit a PR from your fork for the owner to review and merge.
+
+This branch protection works independently of GitHub Actions and doesn't require CI status checks. Do not add Actions workflows or require CI checks unless the maintainer explicitly requests a change to this manual workflow.
 
 ## Implementation and repository hygiene
 

@@ -246,7 +246,9 @@ Bug reports, feature ideas, and focused pull requests are welcome. Start with [C
 
 For a haptic report, tell us which device and OS you used, which values you tried, whether it was a simulator or physical device, and what you observed. For code changes, fork the repository, work on a branch, and open a PR against `main` with your verification results.
 
-You can contribute using Xcode directly; no AI assistant or MCP setup is needed to submit a PR. Agents should follow the separate instructions above. The maintainer reviews and locally verifies changes before merging. Only the owner may authorize updates to `main`; this is a contribution policy, and GitHub permissions must be configured separately to enforce it.
+You can contribute using Xcode directly; no AI assistant or MCP setup is needed to submit a PR. Agents should follow the separate instructions above. The maintainer reviews and locally verifies changes before merging.
+
+GitHub's active [Owner-only main updates ruleset](https://github.com/sahilsatralkar/HapticsLab/rules/24876927) allows only **sahilsatralkar** to push or merge into `main`. Everyone else contributes through a PR for the owner to review and merge. Deleting or recreating `main` is also restricted to the owner. This protection doesn't require GitHub Actions or CI checks.
 
 Keep changes native and dependency-free, and leave personal signing settings out of commits. Contributions use the [MIT license](LICENSE).
 

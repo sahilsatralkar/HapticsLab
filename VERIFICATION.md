@@ -8,6 +8,16 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Envelope order and guidance — 11 October 2026
+
+Reordered Envelope to Sustained, Attack time, then Release time when sustained or Decay time otherwise. Replaced its footer with the agreed explanation for new testers, including relative values and changing one control at a time. Device capability handling, parameter bindings, native spacing, and playback behavior are unchanged. Review continued with the previously reviewed external exported SwiftUI guidance above; no locally exposed built-in Xcode skill was invoked. Apple envelope descriptions and normalized-value semantics were confirmed through Xcode MCP DocumentationSearch during the preceding copy review. README remains deferred.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: the existing envelope parameter-mapping unit test passed for sustained and unsustained configurations.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed. No UI tests were added or run.
+- Compact/light/dark/accessibility visual checks were not executed; the previously recorded simulator interaction skill limitation was not retried. Physical vibration and iOS 26.0 minimum-runtime execution remain unverified. No physical-device installation was performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-19-57-+0530.xcresult`, `BuildProject-Log-20261011-142007.txt` (temporary, not distributed).
+
 ## Repetition controls and UI test removal — 11 October 2026
 
 Moved the former Timing section directly below Haptics and renamed it Repetition. The native Repetitions stepper defaults to one total vibration and retains its 1–8 range. Gap appears only above one repetition and retains its value while hidden. Reset restores one repetition. Added the agreed explanatory footer and updated validation terminology. Native spacing and playback lifecycle protections are unchanged. SwiftUI review continued with the previously reviewed external exported guidance above; no locally exposed built-in Xcode skill was invoked. README remains deferred.

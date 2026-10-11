@@ -102,7 +102,6 @@ private struct HapticEnvelopeSection: View {
 
     var body: some View {
         Section {
-            HapticParameterControl(parameter: .attack, configuration: $configuration, limits: limits)
             if let sustain = limits.ranges[.sustained],
                sustain.contains(0), sustain.contains(1) {
                 Toggle("Sustained", isOn: $configuration.sustained)
@@ -110,6 +109,7 @@ private struct HapticEnvelopeSection: View {
             } else {
                 LabeledContent("Sustained", value: limits.ranges[.sustained] == nil ? "Unavailable" : "Fixed by device")
             }
+            HapticParameterControl(parameter: .attack, configuration: $configuration, limits: limits)
             if configuration.sustained {
                 HapticParameterControl(parameter: .release, configuration: $configuration, limits: limits)
             } else {
@@ -118,7 +118,7 @@ private struct HapticEnvelopeSection: View {
         } header: {
             Text("Envelope")
         } footer: {
-            Text("Attack time controls the rise. With Sustained off, Decay time controls the fall; with Sustained on, Release time controls the fade after the event. These values are normalized, not seconds.")
+            Text("Shape how each vibration builds and fades. Attack time controls how gradually it reaches the selected intensity. With Sustained on, the vibration holds its strength before fading with Release time. With Sustained off, it fades with Decay time. Higher values make the rise or fade longer. These values are relative, not seconds. Change one control at a time and press Play to compare.")
         }
     }
 }

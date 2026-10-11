@@ -238,7 +238,7 @@ Start with [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATI
 - Preserve unrelated work and local signing settings. Inspect the complete staged diff before committing. Physical-device installation and repository visibility changes need an explicit request.
 - Keep documentation aligned with the code. An available API or a successful simulator test doesn't establish physical feedback.
 
-The [capability study](Docs/HAPTICS_STUDY.md) is older research and awaits a separate update. For implemented behavior, use the current source and this README.
+The [capability study](Docs/HAPTICS_STUDY.md), updated on 11 October 2026, maps the current controls and Swift export to Apple APIs and distinguishes implemented features from other framework capabilities. Confirm later changes against the source.
 
 ## Contributing
 
@@ -251,6 +251,8 @@ You can contribute using Xcode directly; no AI assistant or MCP setup is needed 
 GitHub's active [Owner-only main updates ruleset](https://github.com/sahilsatralkar/HapticsLab/rules/24876927) allows only **sahilsatralkar** to push or merge into `main`. Everyone else contributes through a PR for the owner to review and merge. Deleting or recreating `main` is also restricted to the owner. This protection doesn't require GitHub Actions or CI checks.
 
 Keep changes native and dependency-free, and leave personal signing settings out of commits. Contributions use the [MIT license](LICENSE).
+
+Found a security issue? Please use [private vulnerability reporting](https://github.com/sahilsatralkar/HapticsLab/security/advisories/new), rather than a public issue. Our [security policy](SECURITY.md) explains what to include. Repository secret scanning and push protection are enabled; please still review your diff for credentials and personal signing details.
 
 ## Troubleshooting
 

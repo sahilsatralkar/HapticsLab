@@ -6,6 +6,8 @@ labels: ''
 assignees: ''
 ---
 
+<!-- For security vulnerabilities, report privately at https://github.com/sahilsatralkar/HapticsLab/security/advisories/new instead of opening a public issue. -->
+
 <!-- Search existing issues first. Fill in the relevant sections; delete anything that does not apply. -->
 
 ## Summary

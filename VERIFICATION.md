@@ -1,5 +1,27 @@
 # Verification
 
+## Community documentation, security, and release — 11 October 2026
+
+Implemented the four approved readiness follow-ups:
+
+- Refreshed the capability study against app source inspected through Xcode MCP, covering thirteen system choices, current Custom controls, mode-switch retention, exact numeric entry, Swift export, lifecycle handling, and intentionally unimplemented APIs. Rechecked Apple's continuous-event limit, normalized envelope semantics, and Pencil canvas guidance through Xcode MCP.
+- Enabled repository-level secret scanning and push protection. GitHub's repository API returned `enabled` for both. This confirms configuration, not completion of a scan or absence of secrets.
+- Enabled private vulnerability reporting; its status endpoint returned `enabled: true`. Added SECURITY.md with supported-version scope and private reporting instructions, plus reporting links in README, CONTRIBUTING, and the issue template.
+- Published [Haptics lab v1.0](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.0) against the existing tag at `4c76086`. The remote annotated tag object remained unchanged. Release notes describe features, source setup, prior verification evidence, and limitations. No tag move, app binary upload, or app changes were made.
+
+Documentation content, 66 local links/image references/anchors across seven documents, and Git whitespace checks passed. The committed app source, tests, and project configuration were identical between the existing tag and the reviewed main revision. No new app builds, unit tests, UI interactions, or physical-device checks were run for these documentation/settings changes; the earlier readiness review below records the 27-test pass and normal build. Existing local signing changes were preserved.
+
+## Community readiness review — 11 October 2026
+
+Reviewed the public repository, README/contribution workflow, community templates, release metadata, and active main-branch rules. GitHub confirmed the MIT license, enabled issues, recognized community issue template and PR template, and owner-only ruleset with only `sahilsatralkar` allowed to bypass restrictions on `main`. All 52 local references checked across README, CONTRIBUTING, AGENTS, and the templates resolved.
+
+- Xcode MCP: explicitly switched from the selected physical device to iPhone 13 mini simulator / iOS 26.5 before execution. All 27 unit tests passed, followed by a successful normal build with no reported errors. Test discovery initially included two stale example-test entries absent from source; the executed suite contained the expected 27 tests. The exact Xcode application version was not reported; build settings confirmed Swift 6, complete concurrency checking, MainActor default isolation, and iOS/iPadOS 26.0 deployment.
+- No physical-device installation, UI tests, clean-checkout build, iPad layout check, physical vibration/Pencil check, independent compilation of an exported Swift file, or minimum-runtime execution was performed. Existing hardware and sharing limitations remain.
+- Follow-ups found: outdated current-behavior claims in the capability study; a `v1.0` tag without a published GitHub release; no security policy or code of conduct; no repository topics. Repository-level secret scanning, push protection, and private vulnerability reporting were reported disabled. These settings were inspected only, not changed.
+- No app source or project settings were edited. Existing local signing changes remain uncommitted. This entry records the new checks without altering prior verification evidence.
+
+Artifacts: `Test-HapticsLab-2026.10.11_16-28-24-+0530.xcresult` (27 passed), `BuildProject-Log-20261011-162847.txt` (normal build). Temporary artifacts are not distributed.
+
 ## README copy and setup instructions — 11 October 2026
 
 Rewrote the README in a conversational tone, with a four-step simulator setup and separate physical-device instructions. Kept the feature list, API mappings, parameter behavior and limits, export details, source map, agent workflow, and verification limitations. Added links to the community templates and preserved the latest supplied screenshots. No app behavior, repository permissions, or release tags changed.

@@ -4,6 +4,8 @@ Contributions are welcome through focused pull requests. Start with [README.md](
 
 Use the [community issue template](.github/ISSUE_TEMPLATE/community_issue.md) for bugs, feature requests, and documentation suggestions. The [pull request template](.github/pull_request_template.md) prompts you for a summary and local verification results. Complete only the sections relevant to your change.
 
+For suspected security vulnerabilities, use [private vulnerability reporting](https://github.com/sahilsatralkar/HapticsLab/security/advisories/new) instead of a public issue or PR. See [SECURITY.md](SECURITY.md) for supported versions and reporting details. Secret scanning and push protection are enabled, but you should still inspect every diff for credentials and personal signing settings.
+
 ## Contribution workflow
 
 1. Fork the repository and create a branch for your change. For substantial features or behavior changes, discuss the scope in an issue before implementation.

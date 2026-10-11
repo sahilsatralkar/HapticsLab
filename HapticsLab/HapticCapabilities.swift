@@ -9,10 +9,10 @@ nonisolated enum HapticParameter: String, CaseIterable, Identifiable, Sendable {
         switch self {
         case .intensity: "Intensity"
         case .sharpness: "Sharpness"
-        case .attack: "Attack"
-        case .decay: "Decay"
-        case .release: "Release"
-        case .sustained: "Sustain"
+        case .attack: "Attack time"
+        case .decay: "Decay time"
+        case .release: "Release time"
+        case .sustained: "Sustained"
         }
     }
     var parameterID: CHHapticEvent.ParameterID {

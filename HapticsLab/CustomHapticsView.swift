@@ -94,10 +94,10 @@ private struct HapticEnvelopeSection: View {
             HapticParameterControl(parameter: .attack, configuration: $configuration, limits: limits)
             if let sustain = limits.ranges[.sustained],
                sustain.contains(0), sustain.contains(1) {
-                Toggle("Sustain", isOn: $configuration.sustained)
+                Toggle("Sustained", isOn: $configuration.sustained)
                     .accessibilityIdentifier("custom.sustained")
             } else {
-                LabeledContent("Sustain", value: limits.ranges[.sustained] == nil ? "Unavailable" : "Fixed by device")
+                LabeledContent("Sustained", value: limits.ranges[.sustained] == nil ? "Unavailable" : "Fixed by device")
             }
             if configuration.sustained {
                 HapticParameterControl(parameter: .release, configuration: $configuration, limits: limits)
@@ -107,7 +107,7 @@ private struct HapticEnvelopeSection: View {
         } header: {
             Text("Envelope")
         } footer: {
-            Text("Attack controls the rise. With Sustain off, Decay controls the fall; with Sustain on, Release controls the fade after the event. These values are normalized, not seconds.")
+            Text("Attack time controls the rise. With Sustained off, Decay time controls the fall; with Sustained on, Release time controls the fade after the event. These values are normalized, not seconds.")
         }
     }
 }

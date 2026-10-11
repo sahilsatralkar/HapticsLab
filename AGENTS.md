@@ -27,7 +27,7 @@ These instructions apply to coding agents working in this repository. Human cont
 - Keep the interface native and minimal: two columns of equal-height rounded rectangle system buttons, a native System haptics section, compact navigation titles, semantic colors, and native `.padding()` without numeric margins. Do not force the buttons to be square or capsule-shaped.
 - Preserve native Dynamic Type and accessibility labels/identifiers. Dedicated accessibility audits and accessibility-size test passes are optional unless requested; do not remove native support.
 - Custom uses Haptics, Repetition, and Envelope sections with inline information buttons. Continuous reveals Duration; multiple repetitions reveal Gap. Keep the unified Play/Stop toolbar action and separate Share action, with Stop available during startup and playback.
-- Keep default system feedback requests unchanged as a comparison baseline. The app focuses on built-in iPhone vibration; do not reintroduce Alignment/Canvas controls or add audio, accessory haptics, or advanced playback features without a request. API availability alone is not evidence of physical iPhone feedback.
+- Keep default system feedback requests unchanged as a comparison baseline. The shared catalog has thirteen choices, including `Alignment*` and `Path complete*` on both iPhone and iPad, without device-specific filtering. Preserve their footer explanation requiring Apple Pencil Pro with a compatible iPad; neither button visibility nor Core Haptics support detects a connected Pencil. API availability alone is not evidence of physical iPhone feedback. Do not add audio, custom accessory patterns, or advanced playback features without a request.
 
 ## Verification and documentation
 

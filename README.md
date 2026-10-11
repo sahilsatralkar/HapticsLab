@@ -17,7 +17,7 @@ Built with **Swift 6**, **SwiftUI**, and **Core Haptics**, with an **iOS/iPadOS 
   </tr>
 </table>
 
-Screenshots supplied by the maintainer, showing light appearance on hardware identifier `iPhone18,3`, iOS 27.0.1. Custom is a scrolling form; more envelope controls and **Reset to defaults** appear below the captured area. Displayed values and available controls can differ by device and event type.
+Screenshots supplied by the maintainer, showing light appearance on hardware identifier `iPhone18,3`, iOS 27.0.1. The Home screenshot predates the addition of `Alignment*`/`Path complete*` and the revised device footer. Custom is a scrolling form; more envelope controls and **Reset to defaults** appear below the captured area. Displayed values and available controls can differ by device and event type.
 
 ## Contents
 
@@ -38,8 +38,8 @@ Screenshots supplied by the maintainer, showing light appearance on hardware ide
 
 | Feature | Current behavior |
 | --- | --- |
-| System feedback comparison | Eleven predefined SwiftUI haptic choices in a two-column **System haptics** section |
-| Device information | Hardware identifier, iOS version, and detected custom-haptic support on Home |
+| System feedback comparison | Thirteen predefined SwiftUI feedback choices on both iPhone and iPad, including two canvas requests marked with an Apple Pencil Pro requirement |
+| Device information | Hardware identifier, OS version, detected custom-haptic support, and the canvas hardware requirement on Home |
 | Transient and continuous events | Brief taps by default; turn on **Continuous** to reveal Duration |
 | Intensity and sharpness | Smooth sliders within ranges reported for the selected event type |
 | Exact numeric entry | Tap a slider's displayed value for a native editor with Save, Cancel, range guidance, and validation errors |
@@ -75,10 +75,14 @@ Tap any button on Home to request its native SwiftUI feedback. These choices use
 | Default impact | `SensoryFeedback.impact` |
 | Selection | `SensoryFeedback.selection` |
 | Success, Warning, Error | `SensoryFeedback.success / .warning / .error` |
+| `Alignment*` | `SensoryFeedback.alignment` |
+| `Path complete*` | `SensoryFeedback.pathComplete` |
+
+All thirteen buttons appear on both iPhone and iPad without device-specific filtering. The asterisk refers to the footer: “\* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.” These canvas requests do not establish iPhone vibration or detect a connected Pencil; the system decides whether feedback can play. The Core Haptics custom-support check is separate from accessory feedback.
 
 Each tap creates a request with an incrementing sequence, so repeated taps on the same button still change the `.sensoryFeedback` trigger. A recorded request is not proof that hardware delivered a vibration.
 
-The **Custom haptics testing** row opens the screen titled **Custom**. The Home footer displays the raw hardware identifier, such as `iPhone18,3`, rather than guessing a marketing model name. It reports custom haptics as supported only when Core Haptics reports support and the app is not running in a simulator.
+The **Custom haptics testing** row opens the screen titled **Custom**. The Home footer uses **Device model** and **OS version** labels and displays the raw hardware identifier, such as `iPhone18,3`, rather than guessing a marketing model name. It reports custom haptics as supported only when Core Haptics reports support and the app is not running in a simulator.
 
 ## Custom haptics
 
@@ -168,7 +172,7 @@ The app uses native Apple frameworks only: SwiftUI, Core Haptics, Observation, F
 | --- | --- |
 | [HapticsLabApp.swift](HapticsLab/HapticsLabApp.swift) | App entry point |
 | [ContentView.swift](HapticsLab/ContentView.swift) | Home, equal-height two-column grid, device footer, navigation, and scene lifecycle |
-| [NativeHaptic.swift](HapticsLab/NativeHaptic.swift) | Eleven system choices and distinct request values |
+| [NativeHaptic.swift](HapticsLab/NativeHaptic.swift) | Thirteen system choices and distinct request values |
 | [CustomHapticsView.swift](HapticsLab/CustomHapticsView.swift) | Haptics/Repetition/Envelope sections, help sheets, Reset, Play/Stop, and Share |
 | [HapticValueEditor.swift](HapticsLab/HapticValueEditor.swift) | Locale-aware numeric parsing, exact entry, and input errors |
 | [CustomHapticConfiguration.swift](HapticsLab/CustomHapticConfiguration.swift) | Sendable draft/request value, defaults, mode changes, validation, and event timing |
@@ -225,6 +229,7 @@ Keep contributions native and dependency-free. Separate reproducible software be
 | Symptom | What to check |
 | --- | --- |
 | No vibration in the simulator | Expected; use supported physical hardware to feel patterns |
+| `Alignment*` or `Path complete*` produces no iPhone vibration | These canvas requests are provided for Apple Pencil Pro on compatible iPads; see the asterisk explanation on Home |
 | Home says custom haptics are unavailable | The device is a simulator or the Core Haptics support check returned false |
 | Play is unavailable on supported hardware | Check parameter ranges and ensure Continuous duration is greater than zero |
 | Numeric Save does not dismiss the editor | Read the inline error; use a finite value in range without units or grouping syntax |
@@ -237,11 +242,12 @@ Keep contributions native and dependency-free. Separate reproducible software be
 
 ## Scope and references
 
-Haptics lab focuses on **built-in iPhone vibration testing**. Alignment and Canvas feedback buttons are absent. Audio, Apple Pencil/controller haptics, mixed-event timeline editing, dynamic parameter curves, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, and saved preset libraries are not implemented. Swift source export and finite repetition are implemented as described above.
+Haptics lab provides **built-in iPhone vibration testing** and native Alignment/Path complete requests for **Apple Pencil Pro on compatible iPads**. The canvas buttons are visible on both device families and include a hardware-requirement footnote; physical Pencil feedback remains unverified. Audio, custom accessory/controller haptic patterns, mixed-event timeline editing, dynamic parameter curves, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, and saved preset libraries are not implemented. Swift source export and finite repetition are implemented as described above.
 
 Relevant Apple documentation:
 
 - [SwiftUI SensoryFeedback](https://developer.apple.com/documentation/swiftui/sensoryfeedback)
+- [Apple Pencil canvas feedback](https://developer.apple.com/documentation/ApplePencil/playing-haptic-feedback-in-your-app#Play-feedback-for-canvas-events)
 - [Core Haptics](https://developer.apple.com/documentation/corehaptics)
 - [Device capabilities](https://developer.apple.com/documentation/corehaptics/chhapticdevicecapability)
 - [Haptic event parameters](https://developer.apple.com/documentation/corehaptics/chhapticevent/parameterid)

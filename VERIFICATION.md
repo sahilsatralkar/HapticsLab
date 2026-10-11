@@ -1,5 +1,19 @@
 # Verification
 
+## Shared canvas feedback buttons — 11 October 2026
+
+Added `Alignment*` and `Path complete*` to the shared System haptics catalog using SwiftUI `.alignment` and `.pathComplete`. Both appear on iPhone and iPad without device-specific filtering. The Home footer explains: “* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.” Device labels now read `Device model` and `OS version`; the existing custom Core Haptics support check remains separate from Pencil feedback. Native button sizing, semantic colors, and padding are preserved. README and agent scope guidance were updated; the supplied Home screenshot is explicitly identified as predating these additions.
+
+Apple Pencil and SwiftUI documentation were reviewed through Xcode MCP. SwiftUI review continued with the previously reviewed external exported guidance, not a locally exposed built-in Xcode skill.
+
+- Xcode MCP, explicitly selected iPhone 13 mini simulator / iOS 26.5: the affected repeated-native-request unit test passed, now checking distinct repeated requests across all thirteen choices and unique identifiers. No UI tests were added or run.
+- Final normal build succeeded with no reported errors (`BuildProject-Log-20261011-154500.txt`). The tool did not report the exact Xcode application version; the destination list reported the iOS 27.0 SDK.
+- Light and dark previews were rendered and visually inspected. Despite the selected test destination, preview rendering used iPhone Duo / iOS 27.1. Both new button labels were visible and fitted the equal-height grid. The footer was below the captured viewport; its appearance and scroll interaction were not verified. A Display override did not change the captured preview dimensions.
+- Compact iPhone and iPad layout, accessibility text sizes, physical iPhone/Pencil feedback, and execution on the iOS/iPadOS 26.0 minimum runtime remain unverified. The previously recorded device-interaction skill limitation was not retried. No physical-device installation was performed.
+- Documentation content/local references and Git whitespace checks passed. Existing local signing changes were preserved and left uncommitted.
+
+Test artifact: `Test-HapticsLab-2026.10.11_15-44-26-+0530.xcresult` (one test passed). Temporary build/test/preview artifacts are not distributed.
+
 ## Manual contribution verification — 11 October 2026
 
 Expanded CONTRIBUTING.md with the fork/branch/PR workflow, contributor-run and maintainer-run local verification, required PR evidence, and final-revision review. GitHub Actions is intentionally not required; local unit tests and normal builds remain part of app verification. Human contributors may use Xcode directly, while agents retain the Xcode MCP requirement. README and AGENTS.md now describe the same policy and distinguish owner-only merging from CI. Documentation-only checks, optional dedicated accessibility checks, excluded UI tests, and honest hardware limitations remain explicit.

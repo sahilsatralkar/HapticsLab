@@ -1,10 +1,11 @@
 import SwiftUI
 
-/// Native impact, selection, and notification patterns for iPhone testing.
-/// Canvas feedback is excluded; iOS availability does not guarantee iPhone vibration.
+/// Native system feedback requests, including canvas feedback for Apple Pencil Pro.
+/// A successful request does not guarantee tactile output on the current hardware.
 nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
     case light, medium, heavy, soft, solid, rigid, impact
     case selection, success, warning, error
+    case alignment, pathComplete
 
     var id: String { rawValue }
     var title: LocalizedStringResource {
@@ -20,6 +21,8 @@ nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
         case .success: "Success"
         case .warning: "Warning"
         case .error: "Error"
+        case .alignment: "Alignment*"
+        case .pathComplete: "Path complete*"
         }
     }
     var symbol: String {
@@ -46,6 +49,8 @@ nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
         case .success: .success
         case .warning: .warning
         case .error: .error
+        case .alignment: .alignment
+        case .pathComplete: .pathComplete
         }
     }
 }

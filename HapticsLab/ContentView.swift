@@ -142,9 +142,11 @@ private struct HapticDeviceFooter: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            Text("iPhone model: \(info.hardwareIdentifier)")
-            Text("iOS version: \(info.systemVersion)")
+            Text("Device model: \(info.hardwareIdentifier)")
+            Text("OS version: \(info.systemVersion)")
             Text(supportsHaptics && !info.isSimulator ? "Custom haptics supported." : "Custom haptics unavailable.")
+            Text("* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.")
+                .padding(.top)
         }
         .font(.footnote)
         .foregroundStyle(.secondary)

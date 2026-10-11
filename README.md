@@ -1,8 +1,8 @@
 # Haptics lab
 
-A native SwiftUI app for iOS developers and testers to compare Apple's system haptics, tune custom vibration patterns, and export those patterns as reusable Swift code.
+Explore Apple's system haptics, build your own vibration patterns, and take the Swift code into your app. Haptics lab is a small SwiftUI app for iOS developers and testers who want to try a pattern and understand how it works.
 
-Built with **Swift 6**, **SwiftUI**, and **Core Haptics**, with an **iOS/iPadOS 26.0** deployment target and **no third-party dependencies**. The project targets iPhone and iPad; feeling the patterns requires compatible physical hardware. A simulator cannot reproduce vibration.
+It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, **SwiftUI**, and **Core Haptics**, and has **no third-party dependencies**. You can explore the interface in a simulator, but you'll need compatible physical hardware to feel the feedback.
 
 ## Screenshots
 
@@ -12,12 +12,12 @@ Built with **Swift 6**, **SwiftUI**, and **Core Haptics**, with an **iOS/iPadOS 
     <th>Custom — Pattern controls</th>
   </tr>
   <tr>
-    <td><img src="Docs/Screenshots/home.png" width="300" alt="Haptics lab home screen with eleven System haptics buttons, Custom haptics testing navigation, and device capability information"></td>
+    <td><img src="Docs/Screenshots/home.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons, including Alignment and Path complete marked with asterisks"></td>
     <td><img src="Docs/Screenshots/custom.png" width="300" alt="Custom screen with Play and Share, intensity and sharpness sliders, Continuous toggle, Repetitions, and the beginning of the Envelope controls"></td>
   </tr>
 </table>
 
-Screenshots supplied by the maintainer, showing light appearance on hardware identifier `iPhone18,3`, iOS 27.0.1. The Home screenshot predates the addition of `Alignment*`/`Path complete*` and the revised device footer. Custom is a scrolling form; more envelope controls and **Reset to defaults** appear below the captured area. Displayed values and available controls can differ by device and event type.
+These latest screenshots were supplied by the maintainer and show light appearance. On Home, scroll down to reach Custom, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
 
 ## Contents
 
@@ -36,37 +36,48 @@ Screenshots supplied by the maintainer, showing light appearance on hardware ide
 
 ## Features
 
-| Feature | Current behavior |
+| What you can do | How it works |
 | --- | --- |
-| System feedback comparison | Thirteen predefined SwiftUI feedback choices on both iPhone and iPad, including two canvas requests marked with an Apple Pencil Pro requirement |
-| Device information | Hardware identifier, OS version, detected custom-haptic support, and the canvas hardware requirement on Home |
-| Transient and continuous events | Brief taps by default; turn on **Continuous** to reveal Duration |
-| Intensity and sharpness | Smooth sliders within ranges reported for the selected event type |
-| Exact numeric entry | Tap a slider's displayed value for a native editor with Save, Cancel, range guidance, and validation errors |
-| Repetition | One to eight events; Gap appears when Repetitions is greater than one |
-| Envelope shaping | Sustained, Attack time, and either Release time or Decay time, depending on the selected mode and device capabilities |
-| Contextual help | Information buttons beside Haptics, Repetition, and Envelope open explanations for testers |
-| Play and Stop | One toolbar button changes from Play to Stop during startup and playback |
-| Swift export | Share the current configuration as a standalone `CustomHaptic.swift` file through the native share sheet, including Save to Files where available |
-| Retained draft and Reset | Parameters survive navigation during the app session; **Reset to defaults** restores app timing defaults and reported transient-event parameter defaults |
-| Native interface | Light/dark appearance, semantic colors, Dynamic Type, native forms and navigation, and equal-height rounded rectangle system buttons |
-| Playback safeguards | Capability and value validation, cancellation, stale-callback protection, and automatic stopping when leaving Custom or when the app becomes inactive |
+| Compare system haptics | Try thirteen native feedback choices, including two canvas effects marked with an Apple Pencil Pro requirement |
+| Check your device | See its hardware identifier, OS version, and whether custom haptics are supported |
+| Try taps or longer vibrations | Leave **Continuous** off for brief taps, or turn it on to set a Duration |
+| Adjust the feel | Move the Intensity and Sharpness sliders smoothly within the device's reported ranges |
+| Enter an exact value | Tap a slider's number to type a value, with range guidance and validation |
+| Repeat a pattern | Choose one to eight repetitions and set the Gap between them |
+| Shape the envelope | Explore Sustained, Attack time, and Release time or Decay time where supported |
+| Learn as you test | Tap the information button beside Haptics, Repetition, or Envelope for help |
+| Play and stop | Use one toolbar button to start playback or stop it, including during startup |
+| Reuse your work | Share the current pattern as a standalone `CustomHaptic.swift` file |
+| Keep experimenting | Return to Custom without losing your draft during the app session, or use **Reset to defaults** |
+| Use familiar controls | Native forms, navigation, light/dark appearance, Dynamic Type, and equal-height rounded rectangle buttons |
+| Leave playback safely | Playback stops when you leave Custom or the app becomes inactive; validation and cancellation protect playback requests |
 
-No accounts, analytics, third-party services, or app-owned network requests are implemented. Sharing is initiated by the user through the system share sheet. Drafts are kept in memory, not saved across app launches.
+There's no account to create, and the app has no analytics or app-owned network requests. Sharing happens only when you choose it. Your draft stays in memory during the app session; it isn't saved between launches.
 
 ## Build and run
 
-1. Clone or fork this repository and open [HapticsLab.xcodeproj](HapticsLab.xcodeproj) in Xcode.
-2. Use an Xcode toolchain that supports the source's Swift 6 features, including `nonisolated` type declarations, and an iOS SDK with the iOS 26 SwiftUI APIs used here. The deployment target is not a claim that every older Xcode version can build the project.
-3. Select the **HapticsLab** scheme and an installed iOS simulator, then choose **Product → Run** to explore the UI.
-4. To feel the haptics, select a supported physical iPhone. Set your own development team under **Signing & Capabilities** and use a bundle identifier you can provision. Keep personal signing settings local.
-5. Choose **Product → Test** to run the unit tests. No package installation, API keys, backend, audio assets, or AHAP files are required.
+You'll need a Mac with Xcode that supports Swift 6 and the iOS 26 SDK or newer. There are no packages, API keys, or backend services to set up.
 
-The simulator can exercise UI, validation, export generation, and pattern construction. It does not establish what any pattern feels like. See [Tests and verification](#tests-and-verification) for recorded results and remaining device checks.
+1. Clone this repository, or choose **Code → Download ZIP** on GitHub and unzip it.
+2. Open [HapticsLab.xcodeproj](HapticsLab.xcodeproj) in Xcode.
+3. In Xcode's toolbar, select the **HapticsLab** scheme and an iPhone or iPad simulator running iOS/iPadOS 26 or later.
+4. Click **Run** (▶), or press **⌘R**.
+
+You can now explore the screens, edit values, and export Swift code. The simulator won't produce vibrations.
+
+### Try it on your device
+
+1. Connect your iPhone or iPad to your Mac and select it as the run destination in Xcode.
+2. Select the **HapticsLab** app target, open **Signing & Capabilities**, and choose your development team. If Xcode asks for a unique bundle identifier, replace it with one you can use.
+3. Follow any trust or Developer Mode prompts, then click **Run**.
+
+Use a supported iPhone to feel custom vibration patterns. For **Alignment\*** and **Path complete\***, you'll need Apple Pencil Pro with a compatible iPad; the feedback is felt in the Pencil. Keep your signing settings local when contributing.
+
+To run the unit tests, choose **Product → Test** or press **⌘U**. See [Tests and verification](#tests-and-verification) for what the tests cover.
 
 ## System haptics
 
-Tap any button on Home to request its native SwiftUI feedback. These choices use Apple's default parameters; the app does not replace them with custom Core Haptics patterns.
+Tap a button on Home to try Apple's native feedback with its default parameters. This gives you a baseline to compare with your custom patterns.
 
 | Button | SwiftUI API |
 | --- | --- |
@@ -78,25 +89,27 @@ Tap any button on Home to request its native SwiftUI feedback. These choices use
 | `Alignment*` | `SensoryFeedback.alignment` |
 | `Path complete*` | `SensoryFeedback.pathComplete` |
 
-All thirteen buttons appear on both iPhone and iPad without device-specific filtering. The asterisk refers to the footer: “\* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.” These canvas requests do not establish iPhone vibration or detect a connected Pencil; the system decides whether feedback can play. The Core Haptics custom-support check is separate from accessory feedback.
+You'll see all thirteen buttons on both iPhone and iPad. The asterisk points to the footer: “\* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.” These two buttons don't detect whether a Pencil is connected. The system decides whether it can play the feedback, and you shouldn't expect these effects to vibrate an iPhone.
 
-Each tap creates a request with an incrementing sequence, so repeated taps on the same button still change the `.sensoryFeedback` trigger. A recorded request is not proof that hardware delivered a vibration.
+Each tap creates a new request, even when you tap the same button repeatedly. In code, an incrementing sequence keeps the `.sensoryFeedback` trigger changing. Sending a request doesn't confirm that the hardware produced feedback.
 
-The **Custom haptics testing** row opens the screen titled **Custom**. The Home footer uses **Device model** and **OS version** labels and displays the raw hardware identifier, such as `iPhone18,3`, rather than guessing a marketing model name. It reports custom haptics as supported only when Core Haptics reports support and the app is not running in a simulator.
+Choose **Custom haptics testing** to open **Custom**. The Home footer also shows **Device model**, **OS version**, and custom-haptic support. The model is a hardware identifier such as `iPhone18,3`. “Custom haptics supported” appears only when Core Haptics reports support and the app isn't running in a simulator; it doesn't indicate Pencil support.
 
 ## Custom haptics
 
 ### Haptics
 
-Adjust **Intensity** for strength and **Sharpness** for a softer or crisper feel. Leave **Continuous** off for a transient tap. Turn it on to expose **Duration**, which must be greater than zero and at most **30 seconds per event**. A zero duration while Continuous is on is invalid; switch Continuous off to request a tap.
+Start with **Intensity** to adjust strength and **Sharpness** to move from a softer feel to a crisper one. Leave **Continuous** off for brief taps. Turn it on to reveal **Duration** and choose how long each vibration lasts, up to **30 seconds**.
 
-The selected duration is remembered when Continuous is switched off. Changing event type keeps parameter values that fit the new reported ranges; a value outside a newly reported range resets to that parameter's default for the new event type.
+Continuous events need a duration greater than zero. To return to taps, turn Continuous off; your chosen duration is remembered for next time. When you switch modes, values that fit the new event type's ranges are kept. Values outside those ranges return to the device's reported defaults for that event type.
 
 ### Repetition
 
-**Repetitions** is an integer stepper from **1 to 8**, starting at **1**. Increasing it reveals **Gap**, a smooth control from **0 to 2 seconds**, initially **0.12 seconds**. All events in a pattern use the same type and parameters.
+Use **Repetitions** to play the same event **1 to 8 times**. When you choose more than one, **Gap** appears so you can set the spacing from **0 to 2 seconds**. The starting values are one repetition and a stored gap of **0.12 seconds**.
 
-For event index `i`, repetition count `n`, effective duration `d`, and gap `g`:
+Every repetition uses the same event type and parameters. There is no gap after the last event. For example, three vibrations lasting `0.4 s` with `0.15 s` gaps start at `0`, `0.55`, and `1.10 s`, with a scheduled end of `1.50 s`. An envelope can extend the physical response into a gap, so the gap doesn't always mean silence.
+
+If you're inspecting or reusing the timing code, `i` is the event index, `n` is the repetition count, `d` is the event duration, and `g` is the gap:
 
 ```text
 Transient: d = 0
@@ -106,69 +119,76 @@ Event start = i × (d + g), for i = 0 ..< n
 Scheduled pattern end = (n − 1) × (d + g) + d
 ```
 
-There is no trailing gap. Three continuous events of `0.4 s` with `0.15 s` gaps start at `0`, `0.55`, and `1.10 s`; the scheduled end is `1.50 s`. Envelope tails can extend the physical response into a gap, so scheduled spacing does not guarantee silence.
-
 ### Envelope
 
-| Control | Core Haptics parameter | Behavior |
-| --- | --- | --- |
-| Intensity | `.hapticIntensity` | Event strength |
-| Sharpness | `.hapticSharpness` | Event character |
-| Sustained | `.sustained` | Selects the envelope mode; editable only when the reported range permits both off and on |
-| Attack time | `.attackTime` | Shapes the rise toward the selected intensity |
-| Release time | `.releaseTime` | Shown and encoded with Sustained on |
-| Decay time | `.decayTime` | Shown and encoded with Sustained off |
+These controls let you explore how a vibration starts and fades. Try changing one value at a time and replaying the pattern to feel the difference.
 
-**Envelope time values are relative/normalized parameters, not seconds.** Duration and Gap are the controls measured in seconds. Change one parameter at a time and replay to compare its effect on the installed device. Repetitions and Gap are app-defined composition controls, not Core Haptics event-parameter names.
+| Control | Core Haptics parameter | What it does |
+| --- | --- | --- |
+| Intensity | `.hapticIntensity` | Sets the event's strength |
+| Sharpness | `.hapticSharpness` | Changes the event's feel |
+| Sustained | `.sustained` | Selects the envelope mode; you can toggle it only when the device's range supports both values |
+| Attack time | `.attackTime` | Shapes the rise toward the selected intensity |
+| Release time | `.releaseTime` | Appears and is included in the pattern when Sustained is on |
+| Decay time | `.decayTime` | Appears and is included in the pattern when Sustained is off |
+
+**Attack time, Decay time, and Release time use relative/normalized values, not seconds.** Duration and Gap are measured in seconds. Repetitions and Gap are labels for this app's pattern controls, rather than Core Haptics event-parameter names.
 
 ### Exact entry, help, and defaults
 
-Sliders have no step increment. Their value labels show up to eight significant digits; tapping an editable value opens a numeric sheet using the stored `Double`, preserving precision when opening and saving without edits. Core Haptics event parameters are ultimately encoded as `Float` values.
+The sliders move smoothly without fixed steps. For a precise value, tap the number beside a slider, type your value, and choose **Save**. **Cancel** or dismissing the sheet leaves your draft unchanged. If a device reports a fixed value, you'll see it without an editable control.
 
-The editor accepts locale decimal separators and decimal digits, plus pasted decimal/scientific notation. It rejects blank or malformed input, units and grouping syntax, nonfinite/overflowing values, underflow to zero, and values outside the allowed range. Duration must also be positive. Invalid input stays in the editor with an explanation; Save does not silently clamp it. Cancel or dismissal leaves the draft unchanged. A fixed device value is displayed without an editable slider or value button.
+You can use your locale's decimal separator and digits, or paste decimal and scientific notation. The editor explains invalid entries instead of silently changing them to fit the range. It rejects empty or malformed input, units, digit grouping, values outside the range, nonfinite numbers, overflow, and nonzero values so small they round to zero. Duration must also be positive.
 
-Use the information icon beside each section name for its explanation. **Reset to defaults** restores one transient event, a stored continuous duration of `0.2 s`, and a gap of `0.12 s`, then applies the device's reported transient defaults for available parameters. Intensity, sharpness, and envelope defaults therefore should not be assumed identical across devices.
+For developers: labels show up to eight significant digits, but the editor opens with the stored `Double`. Opening and saving without edits preserves that value. Core Haptics event parameters are converted to `Float` when the pattern is built.
+
+Tap a section's information icon for help with its controls. To start again, choose **Reset to defaults**. This restores one tap, a stored continuous duration of `0.2 s`, a gap of `0.12 s`, and the device's reported transient defaults for available parameters. Intensity, sharpness, and envelope defaults can therefore differ between devices.
 
 ### Playback
 
-Tap the toolbar **Play** icon to capture and play the current configuration. It becomes **Stop** while starting or playing; tap it again to cancel or stop. Edits made during playback affect the next request, not the captured pattern already playing.
+Tap **Play** in the toolbar to try your current pattern. The same button becomes **Stop** during startup and playback. Any edits you make while it's playing apply to the next request.
 
-Leaving Custom or moving the app out of its active state stops playback. The draft remains available when returning during the same app session. Playback errors appear in an alert. Invalid configurations prevent playback on supported hardware; on unsupported hardware, Play explains that physical haptic support is required.
+Playback stops when you leave Custom or the app becomes inactive. Your draft is still there when you return during the same app session. Errors appear in an alert. An invalid configuration prevents playback on supported hardware; on unsupported hardware, Play explains that physical haptic support is needed.
 
 ## Export Swift code
 
-1. Configure the pattern in Custom.
-2. Tap **Share**, to the right of Play/Stop.
-3. Share `CustomHaptic.swift` with another app, or choose **Save to Files** if offered by the system share sheet.
-4. Add the file to an iOS app target and present the generated view:
+When you've found a pattern you want to reuse:
+
+1. Tap **Share**, to the right of Play/Stop in Custom.
+2. Send `CustomHaptic.swift` to another app, or choose **Save to Files** if it's available in the share sheet.
+3. Add the file to your iOS app target and present the generated view:
 
 ```swift
 ExportedHapticView()
 ```
 
-The file is UTF-8 Swift source containing `ExportedHapticView` and `ExportedHapticPlayer`, using SwiftUI, Core Haptics, and Observation. It is a standalone example targeting Swift 6 and iOS 26.0+, not a dependency on the HapticsLab module. Rename the generated types if importing multiple exports into the same target.
+The file contains `ExportedHapticView` and `ExportedHapticPlayer`, using SwiftUI, Core Haptics, and Observation. It's standalone UTF-8 Swift source for Swift 6 and iOS 26.0 or later, so you don't need to add HapticsLab to your app. If you import several exports, rename the generated types to avoid name conflicts.
 
-Export uses the same validation, event timing, active parameters, and `Float` conversion as playback. It captures the **current draft**, including repetition and gap, and includes only parameters available on the exporting device. It is not a live link to subsequent edits or a recording of physical vibration.
+Each export captures your **current draft**, including repetition, gap, and the parameters available on the exporting device. It uses the same validation, timing, and `Float` conversion as playback. Later edits won't change an already shared file.
 
-The generated player validates support and parameter ranges on the destination device, exposes Play/Stop, handles errors and interruptions, and stops when its view disappears or its scene becomes inactive. The same configuration may feel different on another device. Export is disabled for an invalid configuration; file preparation and sharing errors are reported. Each share has a separate temporary file, retained through the share sheet and cleaned up on dismissal.
+The generated player checks the destination device's support and parameter ranges, provides Play/Stop, handles errors and interruptions, and stops when its view disappears or the app becomes inactive. Try the result on your destination device: the same values may feel different on different hardware.
+
+Share is disabled while the configuration is invalid. If file preparation or sharing fails, the app shows an error. Each share uses its own temporary file, which stays available through sharing and is cleaned up when the sheet is dismissed.
 
 ## Device capabilities and limits
 
-At controller initialization, `CHHapticEngine.capabilitiesForHardware()` supplies support information. The app queries `attributes(forEventParameter:eventType:)` separately for transient and continuous events for all six parameters in the table above. Valid minimum, maximum, and default values become immutable capability snapshots.
+The app asks Core Haptics what the device supports instead of choosing ranges from its model name. It uses `CHHapticEngine.capabilitiesForHardware()` and queries `attributes(forEventParameter:eventType:)` for all six parameters, separately for transient and continuous events. Valid minimum, maximum, and default values are stored as immutable capability snapshots.
 
-- Available parameters use reported ranges, rather than a hardcoded range selected by iPhone model.
-- Missing required intensity or sharpness attributes prevent validation. Missing optional envelope parameters are shown as unavailable and omitted from generated events.
-- Invalid capability attributes and invalid/nonfinite user values are rejected rather than silently clamped.
-- The 30-second continuous-event limit is the implementation's Core Haptics duration bound; there is no per-device duration-attribute query in this code.
-- One to eight repetitions and a zero-to-two-second gap are **app limits**, not claims about the maximum composition Core Haptics supports. Together they permit up to **254 seconds of scheduled continuous events**. There is no ten-second total-pattern cap in the current implementation.
+A few details are useful when testing:
 
-Support detection is not a vibration self-test. Perceptibility also depends on the pattern, hardware, app state, and system behavior. Zero intensity is accepted and can intentionally be silent.
+- If the device doesn't report required Intensity or Sharpness attributes, the pattern can't pass validation.
+- Optional envelope parameters that aren't available are shown as unavailable and left out of generated events.
+- Invalid capability data and invalid or nonfinite input are rejected. Values aren't silently clamped.
+- Continuous events are limited to **30 seconds each**. The app doesn't query a device-specific duration limit.
+- **1–8 repetitions** and a **0–2-second gap** are app limits. Together, they allow up to **254 seconds of scheduled continuous events**. There is no ten-second total-pattern cap.
+
+A support check can't tell you what a pattern will feel like. The result also depends on the hardware, app state, and system behavior. An intensity of zero is valid and can be intentionally silent.
 
 ## Architecture and source map
 
-The app uses native Apple frameworks only: SwiftUI, Core Haptics, Observation, Foundation, UIKit for device information and sharing, and Darwin for the hardware identifier.
+If you'd like to change the app or reuse part of it, start here. It uses native Apple frameworks only: SwiftUI, Core Haptics, Observation, Foundation, UIKit for device information and sharing, and Darwin for the hardware identifier.
 
-| Source | Responsibility |
+| Source | What you'll find |
 | --- | --- |
 | [HapticsLabApp.swift](HapticsLab/HapticsLabApp.swift) | App entry point |
 | [ContentView.swift](HapticsLab/ContentView.swift) | Home, equal-height two-column grid, device footer, navigation, and scene lifecycle |
@@ -183,68 +203,76 @@ The app uses native Apple frameworks only: SwiftUI, Core Haptics, Observation, F
 | [Assets.xcassets](HapticsLab/Assets.xcassets) | Waveform app icon and native asset catalog |
 | [HapticsLabTests](HapticsLabTests) | Unit tests for configuration, capabilities, lifecycle, numeric input, drafts, and export |
 
-`ContentView` owns the `@MainActor @Observable` controller in `@State`. Custom binds to the controller's in-memory draft. Playback captures a value snapshot, while native engines, players, and observable state stay on MainActor. Asynchronous startup is cancellable; generation tokens and engine identities reject callbacks from obsolete playback. Backgrounding, navigation away, and engine interruptions stop custom playback without automatically restarting it. The engine is haptics-only and enables automatic shutdown.
+`ContentView` owns the `@MainActor @Observable` controller in `@State`, and Custom binds to the controller's in-memory draft. Playback takes an immutable snapshot of that draft. Native engines, players, and observable state stay on MainActor.
 
-To extend the app, update configuration validation, capability mappings, UI controls, export generation, and related unit coverage together. To reuse a configured pattern, start with the exported file; to reuse the editor or controller, follow the source map and preserve lifecycle and concurrency safeguards.
+Startup can be cancelled. Generation tokens and engine identities prevent old asynchronous callbacks from affecting newer playback. Leaving Custom, making the app inactive, or interrupting the engine stops playback without an automatic restart. The engine plays haptics only and uses automatic shutdown.
+
+When adding a parameter, keep validation, capability mappings, controls, export, and related tests in sync. If you just want to reuse a pattern, the exported Swift file is the quickest starting point.
 
 ## Tests and verification
 
-The current **HapticsLabTests** target contains **27 unit tests**:
+The **HapticsLabTests** target has **27 unit tests**:
 
-| File | Coverage |
+| File | What it covers |
 | --- | --- |
 | [HapticsLabTests.swift](HapticsLabTests/HapticsLabTests.swift) | Timing, mode switches, full event duration, smooth values, device ranges, unavailable parameters, envelope encoding, snapshots, distinct native requests, and repeatable Stop |
 | [HapticNumberInputTests.swift](HapticsLabTests/HapticNumberInputTests.swift) | Numeric validation, boundaries, locale input, precision, retained drafts, and Reset |
 | [HapticSwiftExportTests.swift](HapticsLabTests/HapticSwiftExportTests.swift) | Exported parameters/timing, unavailable parameters, invalid drafts, attachment snapshots, independent files, cleanup, and preparation failures |
 
-Verification is intentionally run locally by contributors and the maintainer; **GitHub Actions is not required and no CI workflow is configured**. Run affected unit tests in Xcode (or the full suite with **Product → Test** when appropriate), then finish app changes with **Product → Build**. UI tests are intentionally excluded. Test names and count describe existing coverage, not proof that a new checkout has passed. See [manual verification](CONTRIBUTING.md#manual-verification--no-github-actions-required) for the workflow and what to report.
+Run affected unit tests in Xcode, or choose **Product → Test** for the full suite. Finish app changes with **Product → Build**. We run verification locally: **GitHub Actions isn't required, and no CI workflow is configured.** UI tests are intentionally excluded. The [contribution guide](CONTRIBUTING.md#manual-verification--no-github-actions-required) explains the manual checks and what to include in a PR.
 
-[VERIFICATION.md](VERIFICATION.md) records dated runs, including 27 passing unit tests on the iPhone 13 mini simulator with iOS 26.5, subsequent targeted checks, and normal builds. These are historical results. Documentation-only edits need content, link, and diff checks, not a new test run.
+For documentation-only changes, check the content, links, images, and diff; there's no need to build or run app tests.
 
-Physical vibration, perceptual envelope behavior, hardware interruptions, execution on the minimum iOS 26.0 runtime, iPad layout, and end-to-end sharing into other apps remain unverified in the recorded checks. The supplied screenshots illustrate the interface; they do not establish these behaviors. Validate physical playback separately when shipping code derived from this sample.
+[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including a 27-test pass on the iPhone 13 mini simulator with iOS 26.5 and later targeted checks. Those results describe those runs, so please run the relevant checks for your own changes.
+
+Physical vibration, envelope feel, hardware interruptions, the minimum iOS 26.0 runtime, iPad layout, and sharing into other apps still need verification in the recorded checks. Screenshots show the interface, but don't verify those behaviors. Test physical playback before shipping code based on this sample.
 
 ## Guidance for AI agents
 
-Read [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATION.md) before implementation. Use this README as a map of the current code and the verification log as dated evidence, not as a list of checks already performed for your task.
+Start with [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATION.md). The README describes the current app; the verification log records past checks.
 
-1. Inspect repository state and preserve unrelated changes. Use **Xcode MCP** for source/resource inspection and edits, project changes, Apple documentation, builds, tests, and simulator verification. Shell/file tools may handle repository documentation and Git. Report unavailable required MCP operations instead of silently substituting shell-based Xcode commands.
-2. Preserve iOS 26.0, Swift 6, native frameworks, MainActor ownership, Sendable request snapshots, strict validation, cancellation, generation checks, and engine-identity checks. Keep the UI native with semantic colors and native padding.
-3. Review SwiftUI edits using available guidance, identifying whether it is a locally exposed skill or an external exported copy. Do not claim an unavailable skill was invoked.
-4. Run affected unit tests and finish app changes with a normal build through Xcode MCP. Do not reintroduce UI tests or add GitHub Actions/required CI checks unless the maintainer explicitly requests a workflow change. Report the actual simulator/runtime, skipped checks, and hardware limitations. Source edits, simulator tests, and physical vibration checks are different evidence.
-5. Keep personal signing values, credentials, Xcode user state, and build output out of commits. Inspect the full staged diff, including signing configuration, before committing. Never install on physical hardware or change repository visibility without an explicit request.
-6. Keep feature documentation aligned with the code when behavior changes. Do not add capabilities merely because an Apple API exists; availability alone does not establish an iPhone vibration effect.
+- Follow the tool workflow in AGENTS.md. It currently requires **Xcode MCP** for app source/resource work, project changes, Apple documentation, builds, tests, and simulator verification. Use shell/file tools for repository documentation and Git. Report an unavailable required operation instead of silently substituting shell-based Xcode commands.
+- Preserve Swift 6, the iOS/iPadOS 26.0 deployment target, native frameworks, MainActor ownership, Sendable snapshots, validation, cancellation, and stale-callback checks.
+- Review SwiftUI changes with available guidance and say whether it came from a locally exposed skill or an external copy. Don't claim to have used a skill that wasn't available.
+- Run affected unit tests, then a normal build through Xcode MCP. Report the actual destination/runtime, results, and skipped checks. Don't add UI tests, GitHub Actions, or required CI checks unless the maintainer requests that change.
+- Preserve unrelated work and local signing settings. Inspect the complete staged diff before committing. Physical-device installation and repository visibility changes need an explicit request.
+- Keep documentation aligned with the code. An available API or a successful simulator test doesn't establish physical feedback.
 
-**Historical research:** The dated [capability study](Docs/HAPTICS_STUDY.md) predates later UI, export, and test changes and is awaiting a separate maintenance pass. Use the current source and this README for implemented behavior.
+The [capability study](Docs/HAPTICS_STUDY.md) is older research and awaits a separate update. For implemented behavior, use the current source and this README.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for project constraints. Fork the repository, make a focused change on a branch, and open a pull request describing the problem, resulting behavior, and verification performed. For haptic reports, include the hardware identifier, iOS version, selected values, and whether testing used a physical device or simulator.
+Bug reports, feature ideas, and focused pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), then use the [issue template](.github/ISSUE_TEMPLATE/community_issue.md) or [PR template](.github/pull_request_template.md) to share the details.
 
-Human contributors use Xcode directly; Xcode MCP is required only for coding agents. The maintainer reviews and locally verifies contributions before merging into `main`. Owner-only merging is a separate access policy and does not depend on GitHub Actions; GitHub enforcement must be configured separately.
+For a haptic report, tell us which device and OS you used, which values you tried, whether it was a simulator or physical device, and what you observed. For code changes, fork the repository, work on a branch, and open a PR against `main` with your verification results.
 
-Keep contributions native and dependency-free. Separate reproducible software behavior from subjective tactile observations, and do not include personal signing settings. Contributions use the repository's [MIT license](LICENSE).
+You can contribute using Xcode directly; no AI assistant or MCP setup is needed to submit a PR. Agents should follow the separate instructions above. The maintainer reviews and locally verifies changes before merging. Only the owner may authorize updates to `main`; this is a contribution policy, and GitHub permissions must be configured separately to enforce it.
+
+Keep changes native and dependency-free, and leave personal signing settings out of commits. Contributions use the [MIT license](LICENSE).
 
 ## Troubleshooting
 
-| Symptom | What to check |
+| What you're seeing | What to try |
 | --- | --- |
-| No vibration in the simulator | Expected; use supported physical hardware to feel patterns |
-| `Alignment*` or `Path complete*` produces no iPhone vibration | These canvas requests are provided for Apple Pencil Pro on compatible iPads; see the asterisk explanation on Home |
-| Home says custom haptics are unavailable | The device is a simulator or the Core Haptics support check returned false |
-| Play is unavailable on supported hardware | Check parameter ranges and ensure Continuous duration is greater than zero |
-| Numeric Save does not dismiss the editor | Read the inline error; use a finite value in range without units or grouping syntax |
-| An envelope control is unavailable or fixed | The reported capability for that event type is absent or does not allow editing |
+| No vibration in the simulator | Use supported physical hardware to feel the pattern |
+| `Alignment*` or `Path complete*` doesn't vibrate your iPhone | Try Apple Pencil Pro on a compatible iPad; these canvas effects are felt in the Pencil |
+| Home says custom haptics are unavailable | Check whether you're using a simulator or a device without Core Haptics support |
+| Play is unavailable on supported hardware | Check the parameter ranges and use a positive Duration when Continuous is on |
+| Save won't close the numeric editor | Read the inline error and enter a finite number in range, without units or digit grouping |
+| An envelope control is unavailable or fixed | The device hasn't reported an editable range for that parameter and event type |
 | A custom pattern is silent | Check intensity, hardware support, foreground state, and system settings |
-| Playback stops after leaving Custom or backgrounding | Expected lifecycle cleanup; return and press Play again |
-| Share is unavailable or fails | Validate the current draft; check the sharing error and destination app's support for `.swift` files |
-| Exported code reports unsupported values | The destination device's capabilities differ; retune the pattern on that device |
-| Physical-device build fails to sign | Configure your own team and provisionable bundle identifier locally |
+| Playback stops when you leave Custom or background the app | This is expected; return to Custom and press Play again |
+| Share is unavailable or fails | Check your values, the error message, and whether the destination app accepts `.swift` files |
+| Exported code reports unsupported values | Adjust the pattern for the destination device's capabilities |
+| Xcode can't sign a device build | Choose your development team and a bundle identifier you can provision |
 
 ## Scope and references
 
-Haptics lab provides **built-in iPhone vibration testing** and native Alignment/Path complete requests for **Apple Pencil Pro on compatible iPads**. The canvas buttons are visible on both device families and include a hardware-requirement footnote; physical Pencil feedback remains unverified. Audio, custom accessory/controller haptic patterns, mixed-event timeline editing, dynamic parameter curves, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, and saved preset libraries are not implemented. Swift source export and finite repetition are implemented as described above.
+The app covers built-in iPhone vibration testing and native Alignment/Path complete requests for Apple Pencil Pro on compatible iPads. Both canvas buttons appear on iPhone and iPad with a hardware footnote; physical Pencil feedback still needs verification.
 
-Relevant Apple documentation:
+It doesn't currently include audio, custom accessory/controller patterns, mixed-event timelines, dynamic parameter curves, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, or saved preset libraries. You can use finite repetition and Swift source export as described above.
+
+For the underlying APIs, see Apple's documentation:
 
 - [SwiftUI SensoryFeedback](https://developer.apple.com/documentation/swiftui/sensoryfeedback)
 - [Apple Pencil canvas feedback](https://developer.apple.com/documentation/ApplePencil/playing-haptic-feedback-in-your-app#Play-feedback-for-canvas-events)

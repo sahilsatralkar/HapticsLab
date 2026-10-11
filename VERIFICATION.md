@@ -1,5 +1,17 @@
 # Verification
 
+## README copy and setup instructions — 11 October 2026
+
+Rewrote the README in a conversational tone, with a four-step simulator setup and separate physical-device instructions. Kept the feature list, API mappings, parameter behavior and limits, export details, source map, agent workflow, and verification limitations. Added links to the community templates and preserved the latest supplied screenshots. No app behavior, repository permissions, or release tags changed.
+
+Reviewed the copy against the documented implementation and contribution workflow; all README local links, anchors, and image references resolve, and Git whitespace checks passed. No app builds, tests, or device setup checks were run for this documentation-only change.
+
+## Refreshed README screenshots — 11 October 2026
+
+Replaced the Home and Custom documentation images with the maintainer-supplied `IMG_3236.PNG` and `IMG_3237.PNG`, respectively. Both are 1206 × 2622 PNGs copied without image modification. Visually reviewed the supplied images: Home shows all thirteen system choices, including the two asterisk-marked canvas buttons; the navigation row and footer are outside the capture. Custom shows the top of its scrolling form. Updated README alt text and caption, removing the obsolete screenshot warning and avoiding unverified device/OS attribution for these new captures.
+
+Verified byte-for-byte copies, PNG dimensions, README local links/image references/anchors, and Git whitespace. This was a documentation-only update; no app tests, builds, hardware checks, or release-tag changes were performed.
+
 ## Shared canvas feedback buttons — 11 October 2026
 
 Added `Alignment*` and `Path complete*` to the shared System haptics catalog using SwiftUI `.alignment` and `.pathComplete`. Both appear on iPhone and iPad without device-specific filtering. The Home footer explains: “* Requires Apple Pencil Pro with a compatible iPad. Feedback is felt in the Pencil.” Device labels now read `Device model` and `OS version`; the existing custom Core Haptics support check remains separate from Pencil feedback. Native button sizing, semantic colors, and padding are preserved. README and agent scope guidance were updated; the supplied Home screenshot is explicitly identified as predating these additions.

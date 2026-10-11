@@ -8,6 +8,20 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Exact input and retained custom draft — 11 October 2026
+
+Numeric values beside the smooth sliders now open a native editor with a decimal keyboard, Save, Cancel, allowed-range guidance, and inline input errors. Validation rejects empty or malformed text, units/grouping, nonfinite/overflowing values, underflow to zero, and out-of-range values without clamping or changing the draft. Continuous duration must be positive. Input accepts locale decimal separators, decimal digits, and pasted Swift decimal/scientific notation. Opening and saving preserves the stored Double rather than the rounded display value; row values now show up to eight significant digits. Fixed device values cannot be edited. Cancelling or dismissing an editor does not apply its text.
+
+Moved the draft into the existing MainActor controller owned by the home screen, so rebuilding or returning to Custom does not reset parameters. This is in-memory retention for the current app session, not persistence across launches. Reset now reads `Reset parameter to default` and restores the device-derived defaults. Playback requests remain immutable snapshots; leaving Custom or backgrounding still stops playback. No Undo, general disabled-action explanation, or playback-edit message was added. README remains deferred.
+
+Apple TextField and FocusState documentation was reviewed through Xcode MCP. SwiftUI review continued with the previously reviewed external exported guidance; no built-in Xcode skill was invoked.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: all 27 unit tests passed. Seven new tests cover strict text validation, exact bounds and precision, positive continuous duration, German and Arabic decimal input, round-trip formatting, draft retention through Stop/view construction, and Reset preserving an already captured snapshot.
+- Normal build succeeded with no errors or warnings; a final normal build also succeeded after an indentation-only cleanup. Git whitespace check passed.
+- Keyboard/editor interaction, Save/Cancel UI, actual navigation retention, compact/light/dark appearance, physical vibration, and iOS 26.0 minimum-runtime execution were not exercised. The previously recorded simulator-interaction limitation was not retried. No UI tests, dedicated accessibility checks, or physical-device installation were performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_15-09-57-+0530.xcresult` (27 tests), `BuildProject-Log-20261011-151021.txt` (normal build), `BuildProject-Log-20261011-151048.txt` (final normal build after indentation cleanup). Temporary artifacts are not distributed.
+
 ## Home title capitalization — 11 October 2026
 
 Changed the home navigation title to `Haptics lab`, matching the requested app display name. Source edit, unit execution, and build used Xcode MCP; README remains deferred. No control behavior or layout changed.

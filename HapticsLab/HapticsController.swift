@@ -11,6 +11,7 @@ final class HapticsController {
     private(set) var isPlaying = false
     private(set) var status = "Ready"
     private(set) var errorMessage: String?
+    var customConfiguration = CustomHapticConfiguration.defaults
     let capabilities = HapticCapabilities.detect()
     let deviceInfo = HapticDeviceInfo.detect()
     var supportsCustomHaptics: Bool { capabilities.supportsHaptics }
@@ -20,6 +21,16 @@ final class HapticsController {
     @ObservationIgnored private var player: (any CHHapticAdvancedPatternPlayer)?
     @ObservationIgnored private var startupTask: Task<Void, Never>?
     @ObservationIgnored private var generation: UInt64 = 0
+
+    init() {
+        resetCustomConfiguration()
+    }
+
+    func resetCustomConfiguration() {
+        var configuration = CustomHapticConfiguration.defaults
+        configuration.resetParameters(using: capabilities.event(configuration.kind))
+        customConfiguration = configuration
+    }
 
     func recordNativeRequest(_ title: String) {
         status = "Requested: " + title

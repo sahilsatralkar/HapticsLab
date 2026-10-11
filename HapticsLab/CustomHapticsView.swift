@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CustomHapticsView: View {
     @Bindable var controller: HapticsController
-    @State private var configuration: CustomHapticConfiguration
+    @Binding private var configuration: CustomHapticConfiguration
     @State private var presentedHelp: HapticHelpTopic?
     @State private var shareFile: HapticShareFile?
     @State private var retainedShareFile: HapticShareFile?
@@ -11,9 +11,10 @@ struct CustomHapticsView: View {
 
     init(controller: HapticsController) {
         self.controller = controller
-        var initial = CustomHapticConfiguration.defaults
-        initial.resetParameters(using: controller.capabilities.event(initial.kind))
-        _configuration = State(initialValue: initial)
+        _configuration = Binding(
+            get: { controller.customConfiguration },
+            set: { controller.customConfiguration = $0 }
+        )
     }
 
     private var limits: HapticEventCapabilities { controller.capabilities.event(configuration.kind) }
@@ -31,7 +32,7 @@ struct CustomHapticsView: View {
                 if configuration.isContinuous {
                     HapticValueSlider(title: "Duration", value: $configuration.duration,
                                       range: 0...CustomHapticConfiguration.maximumContinuousDuration,
-                                      identifier: "custom.duration", seconds: true)
+                                      identifier: "custom.duration", seconds: true, requiresPositive: true)
                     if configuration.duration == 0 {
                         Text("Duration must be greater than 0.")
                             .font(.footnote)
@@ -44,11 +45,8 @@ struct CustomHapticsView: View {
             HapticRepetitionSection(configuration: $configuration, presentedHelp: $presentedHelp)
             HapticEnvelopeSection(configuration: $configuration, limits: limits, presentedHelp: $presentedHelp)
             Section {
-                Button("Reset parameters") {
-                    configuration = .defaults
-                    configuration.resetParameters(using: controller.capabilities.event(configuration.kind))
-                }
-                .accessibilityIdentifier("custom.reset")
+                Button("Reset parameter to default", action: controller.resetCustomConfiguration)
+                    .accessibilityIdentifier("custom.reset")
             }
         }
         .buttonBorderShape(.roundedRectangle(radius: 12))
@@ -302,14 +300,30 @@ private struct HapticValueSlider: View {
     let range: ClosedRange<Double>
     let identifier: String
     var seconds = false
+    var requiresPositive = false
+    @State private var isEditing = false
+    @Environment(\.locale) private var locale
 
     var body: some View {
         VStack(alignment: .leading) {
             LabeledContent {
-                HStack {
-                    Text(value, format: .number.precision(.fractionLength(3)))
-                        .monospacedDigit()
-                    if seconds { Text("s") }
+                Button {
+                    isEditing = true
+                } label: {
+                    HStack {
+                        Text(value, format: .number.precision(.significantDigits(1...8)))
+                            .monospacedDigit()
+                        if seconds { Text("s") }
+                    }
+                }
+                .buttonStyle(.borderless)
+                .foregroundStyle(.primary)
+                .disabled(range.lowerBound == range.upperBound)
+                .accessibilityLabel(Text("Edit \(String(localized: title))"))
+                .accessibilityIdentifier(identifier + ".edit")
+                .sheet(isPresented: $isEditing) {
+                    HapticValueEditor(title: title, value: $value, range: range,
+                                      requiresPositive: requiresPositive, seconds: seconds, locale: locale)
                 }
             } label: {
                 Text(title)

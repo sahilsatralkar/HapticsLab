@@ -29,7 +29,7 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Haptics Lab")
+            .navigationTitle("Haptics lab")
             .navigationBarTitleDisplayMode(.inline)
             .sensoryFeedback(trigger: request) { _, new in new?.haptic.feedback }
             .onChange(of: scenePhase) { _, phase in

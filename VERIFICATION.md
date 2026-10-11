@@ -8,6 +8,26 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Home title capitalization — 11 October 2026
+
+Changed the home navigation title to `Haptics lab`, matching the requested app display name. Source edit, unit execution, and build used Xcode MCP; README remains deferred. No control behavior or layout changed.
+
+- iPhone 13 mini simulator, iOS 26.5: existing distinct-native-request unit test passed; final normal build succeeded with no reported errors. Git whitespace check passed.
+- Visual title appearance, physical vibration, and iOS 26.0 minimum-runtime execution were not checked. No UI tests, dedicated accessibility checks, or physical-device installation were performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_15-00-33-+0530.xcresult`, `BuildProject-Log-20261011-150041.txt` (temporary, not distributed).
+
+## App display name and capability-copy review — 11 October 2026
+
+Set `CFBundleDisplayName` to `Haptics lab` through Xcode MCP AddInfoPlist. Xcode MCP GetTargetBuildSettings confirmed the evaluated display name. The in-app navigation title remains `Haptics Lab`. Existing local signing settings and deferred README changes were preserved.
+
+Reviewed the footer implementation through Xcode MCP: it shows Custom haptics supported only when `CHHapticEngine.capabilitiesForHardware().supportsHaptics` is true and the app is not a simulator build. Otherwise it shows Custom haptics unavailable. Capabilities are captured when the controller is initialized. This is a hardware-support check, not confirmation that a playback request has succeeded; no footer behavior was changed.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: existing repeatable-Stop unit test passed, followed by a successful normal build with no reported errors. The unit test is a smoke check, not an assertion of the icon label. Git whitespace check passed.
+- Home Screen icon-label appearance, physical playback, and iOS 26.0 minimum-runtime execution were not checked. No physical-device installation, UI tests, or dedicated accessibility checks were performed.
+
+Artifacts: `Test-HapticsLab-2026.10.11_14-59-26-+0530.xcresult`, `BuildProject-Log-20261011-145939.txt` (temporary, not distributed).
+
 ## Native Swift file sharing — 11 October 2026
 
 Replaced the direct file-export dialog with UIKit's native activity sheet presented from SwiftUI. Share Swift code captures the current validated configuration into a real UTF-8 `CustomHaptic.swift` attachment, allowing compatible sharing apps and Save to Files. Each request has a unique temporary directory, so later exports cannot overwrite an in-flight attachment. The file remains retained through child activity presentations and is cleaned up when the share sheet dismisses, including cancellation. Preparation and activity errors use the Sharing unavailable alert. The generated SwiftUI/Core Haptics code, validation, separate toolbar groups, and Play/Stop handling remain unchanged. Removed the obsolete FileDocument implementation.

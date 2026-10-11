@@ -210,7 +210,7 @@ Read [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATION.md)
 5. Keep personal signing values, credentials, Xcode user state, and build output out of commits. Inspect the full staged diff, including signing configuration, before committing. Never install on physical hardware or change repository visibility without an explicit request.
 6. Keep feature documentation aligned with the code when behavior changes. Do not add capabilities merely because an Apple API exists; availability alone does not establish an iPhone vibration effect.
 
-**Known documentation inconsistency:** `AGENTS.md` still mentions a former ten-second pattern cap. The current model uses the event and composition limits documented above. The dated [capability study](Docs/HAPTICS_STUDY.md) also predates later UI, export, and test changes. These documents are awaiting a separate maintenance pass; do not describe their old feature lists as current behavior.
+**Historical research:** The dated [capability study](Docs/HAPTICS_STUDY.md) predates later UI, export, and test changes and is awaiting a separate maintenance pass. Use the current source and this README for implemented behavior.
 
 ## Contributing
 

@@ -1,5 +1,11 @@
 # Verification
 
+## Agent guidance audit — 11 October 2026
+
+Updated AGENTS.md against the current code and maintainer preferences: replaced the obsolete ten-second cap and square-button requirement, made dedicated accessibility checks optional, and clarified device-derived ranges, numeric validation, session draft retention, envelope semantics, export parity, and playback safeguards. Clarified MCP versus documentation/Git tool boundaries and actual-destination reporting. Added the owner's main-update policy without claiming GitHub enforcement. Existing signing prohibitions remain intact. Removed README's now-resolved warning about stale AGENTS guidance; the capability-study follow-up remains.
+
+Documentation content, relative links/image references, and Git whitespace checks passed. No app source or project changes were made, and no tests, builds, simulator interactions, hardware checks, or GitHub settings changes were performed for this audit.
+
 ## README and supplied screenshots — 11 October 2026
 
 Rewrote README against the current source inspected through Xcode MCP: eleven native choices, current Custom sections, exact numeric editing, retained drafts, Reset, capabilities and limits, Play/Stop, and Swift file sharing. Added setup, source mapping, unit coverage, reuse, and AI-agent guidance. Removed obsolete Canvas/UI-test links and old slider/timing descriptions. Other contribution documents remain a separate follow-up, with their known drift identified in README.

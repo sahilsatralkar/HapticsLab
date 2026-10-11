@@ -1,25 +1,49 @@
-# HapticsLab
+# Haptics lab — guidance for AI agents
 
-## Workflow
+These instructions apply to coding agents working in this repository. Human contributors should start with [README.md](README.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- Read [README.md](README.md) and [VERIFICATION.md](VERIFICATION.md) before implementation. Keep responses concise.
-- Use Xcode MCP for source/resource inspection and edits, project changes, Apple documentation, builds, tests, and simulator verification. If a required MCP operation is unavailable or fails, stop the affected code work and report the blocker; do not silently substitute shell-based Xcode operations.
-- Shell/file tools may handle repository documentation and Git inspection. Documentation-only edits require link/content and diff checks, not app tests or builds.
+## Workflow and tools
+
+- Read README and [VERIFICATION.md](VERIFICATION.md) before implementation. README describes current features; verification entries are dated evidence, not checks already run for your task. Keep responses concise and report material blockers.
+- Inspect Git status before editing and preserve unrelated user changes. Follow the user's current scope and explicit preferences; do not expand a documentation task into app changes or a repository publication.
+- Use **Xcode MCP** for app source/resource inspection and edits, project changes, Apple documentation, builds, tests, and simulator verification. Discover the active workspace and relevant project paths rather than assuming a previous session's identifiers still apply.
+- If a required MCP operation is unavailable or fails, stop the affected work and report the blocker. Continue independent work that remains possible. Do not silently substitute shell-based Xcode operations. An approved exception applies only to the files and operation the user authorized.
+- Shell/file tools may handle repository documentation, including documentation screenshots, and Git operations within the authorized task. Do not use this allowance to edit app assets or project settings.
 - Review SwiftUI changes using relevant available Xcode skill guidance. State whether guidance came from a locally exposed built-in skill or an external exported copy; never claim an unavailable skill was invoked.
 
-## Implementation
+## Implementation safeguards
 
-- Preserve the iOS 26.0 deployment target, Swift 6, SwiftUI, native Apple frameworks, and zero third-party dependencies.
-- Keep native UI/framework objects and observable state on `MainActor`. Use immutable `Sendable` configuration snapshots for playback requests. Preserve task cancellation, playback-generation and engine-identity checks against stale asynchronous callbacks. Do not suppress isolation checking or introduce unchecked `Sendable` wrappers.
-- Stop custom playback when leaving its screen or backgrounding the app. Preserve parameter validation and the ten-second pattern limit; reject invalid/nonfinite values rather than silently clamping them.
-- Keep the UI native and minimal: two columns of rounded square haptic buttons, compact navigation title, semantic colors, Dynamic Type, and native padding without numeric margins.
+- Preserve the iOS/iPadOS 26.0 deployment target, Swift 6, SwiftUI, native Apple frameworks, and zero third-party dependencies. Keep strict concurrency checking and MainActor isolation.
+- Keep native UI/framework objects and observable state on `MainActor`. Capture immutable `Sendable` configuration snapshots for playback requests. Preserve task cancellation, playback-generation and engine-identity checks against stale asynchronous callbacks. Do not suppress isolation checking or introduce unchecked `Sendable` wrappers.
+- Stop custom playback when leaving its screen or when the scene becomes inactive, including backgrounding. Preserve the controller-owned draft across navigation within the app session. Do not introduce persistence across launches without a requested feature change.
+- Derive event-parameter ranges and defaults from Core Haptics separately for transient and continuous events. Never infer support from a hardware model string. Missing required intensity/sharpness attributes must prevent validation; unavailable optional envelope parameters must be omitted rather than assigned invented ranges.
+- Preserve the limits in [CustomHapticConfiguration.swift](HapticsLab/CustomHapticConfiguration.swift): continuous duration greater than zero and at most 30 seconds per event, 1–8 repetitions, and a 0–2-second gap. Repetition and gap are app limits. **There is no ten-second total-pattern cap.** Do not restore it from historical documentation.
+- Keep sliders smooth and numeric entry precise. Reject invalid, nonfinite, and out-of-range input rather than silently clamping it. Invalid editor text must not mutate the draft; cancellation must discard it. Mode changes retain values valid for the new event type and use reported defaults only where the new range requires it.
+- Treat Attack time, Decay time, and Release time as relative envelope parameters, not seconds. Encode the active Release/Decay branch according to Sustained. Keep UI controls, validation, event construction, Swift export, and related tests consistent when changing parameters.
+- Preserve export parity with playback: capture the current draft as a standalone UTF-8 `CustomHaptic.swift` attachment, validate using the same values and timing, retain the file through sharing, and clean up only its own temporary directory. Generated playback must retain destination-device validation and lifecycle safeguards.
 
-## Verification and repository hygiene
+## UI and product scope
 
-- After app changes, run affected unit tests through Xcode MCP, then finish with a normal build. UI tests are intentionally excluded at the user's request. For layout changes, review compact screens, light/dark appearance, and accessibility text sizes when simulator interaction is available; report any unexecuted checks.
-- Simulator unit tests verify requests and pattern construction; they cannot verify physical vibration. Report the tested simulator/runtime and unexecuted hardware and iOS 26.0 minimum-runtime checks. Do not present historical results in VERIFICATION.md as checks run for the current change.
-- Update README.md when behavior or setup changes, and VERIFICATION.md when recording new checks or limitations. Record failed or unavailable checks honestly.
-- Do not install on physical devices or change repository visibility without an explicit request. Keep personal signing settings, credentials, build output, and Xcode user state out of Git. Preserve unrelated user changes.
+- Keep the interface native and minimal: two columns of equal-height rounded rectangle system buttons, a native System haptics section, compact navigation titles, semantic colors, and native `.padding()` without numeric margins. Do not force the buttons to be square or capsule-shaped.
+- Preserve native Dynamic Type and accessibility labels/identifiers. Dedicated accessibility audits and accessibility-size test passes are optional unless requested; do not remove native support.
+- Custom uses Haptics, Repetition, and Envelope sections with inline information buttons. Continuous reveals Duration; multiple repetitions reveal Gap. Keep the unified Play/Stop toolbar action and separate Share action, with Stop available during startup and playback.
+- Keep default system feedback requests unchanged as a comparison baseline. The app focuses on built-in iPhone vibration; do not reintroduce Alignment/Canvas controls or add audio, accessory haptics, or advanced playback features without a request. API availability alone is not evidence of physical iPhone feedback.
+
+## Verification and documentation
+
+- For app changes, run affected unit tests through Xcode MCP, then finish with a normal build. Do not add unrelated tests for copy-only edits. **UI tests are intentionally excluded; do not reintroduce them.**
+- Check the actual run destination before tests or installation. Use a simulator unless physical-device installation is explicitly requested. Record the destination/runtime reported by the operation; preview rendering may use a different destination from the active scheme.
+- For layout changes, review a compact screen and light/dark appearance when supported MCP operations are available. Identify preview-only evidence and any unexecuted checks. Do not imply that screenshots establish successful interactions or physical vibration.
+- Simulator unit tests verify requests, validation, pattern construction, and export logic; they cannot verify tactile output. Report relevant unexecuted physical-device and iOS 26.0 minimum-runtime checks. Keep historical results clearly distinguished from checks run for the current change.
+- Update README when behavior or setup changes, and VERIFICATION when recording new checks or limitations. Record failed or unavailable checks honestly. The dated [capability study](Docs/HAPTICS_STUDY.md) is research context and may predate later UI/export changes; confirm current behavior against source.
+- Documentation-only changes require content, relative-link/image-reference, and diff checks, not app tests or builds. Use supplied or actual captured screenshots, identify their provenance, and do not present old screens or generated mockups as the current app. Remove any temporary preview source used for captures through Xcode MCP.
+
+## Git and repository access
+
+- Keep changes focused and preserve local signing settings, Xcode user state, credentials, and build output outside commits. Stage only files belonging to the authorized task and inspect the complete staged diff before every commit.
+- Contributions should use a branch and pull request. **Only the repository owner, `sahilsatralkar`, may authorize updates or merges into upstream `main`.** Agents acting for other contributors must submit a PR rather than update upstream `main`. Honor the owner's explicit branch, commit, and push instructions.
+- This file documents maintainer policy; it does not enforce GitHub permissions. Verify actual branch protections separately and never claim owner-only merging is enforced without evidence from GitHub.
+- Do not change repository visibility, access permissions, or branch protections without an explicit request. Do not rewrite published history without explicit authorization.
 
 ## Development team and signing: never commit
 

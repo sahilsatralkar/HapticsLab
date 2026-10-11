@@ -38,8 +38,8 @@ struct CustomHapticsView: View {
             } footer: {
                 Text("Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps.")
             }
+            HapticRepetitionSection(configuration: $configuration)
             HapticEnvelopeSection(configuration: $configuration, limits: limits)
-            HapticTimingSection(configuration: $configuration)
             if controller.isPlaying {
                 Section {
                     Button("Stop", action: controller.stop)
@@ -145,21 +145,23 @@ private struct HapticParameterControl: View {
     }
 }
 
-private struct HapticTimingSection: View {
+private struct HapticRepetitionSection: View {
     @Binding var configuration: CustomHapticConfiguration
 
     var body: some View {
         Section {
-            Stepper("Pulses: \(configuration.pulseCount)", value: $configuration.pulseCount,
+            Stepper("Repetitions: \(configuration.pulseCount)", value: $configuration.pulseCount,
                     in: CustomHapticConfiguration.pulseRange)
-                .accessibilityIdentifier("custom.pulses")
-            HapticValueSlider(title: "Gap", value: $configuration.gap,
-                              range: CustomHapticConfiguration.gapRange,
-                              identifier: "custom.gap", seconds: true)
+                .accessibilityIdentifier("custom.repetitions")
+            if configuration.pulseCount > 1 {
+                HapticValueSlider(title: "Gap", value: $configuration.gap,
+                                  range: CustomHapticConfiguration.gapRange,
+                                  identifier: "custom.gap", seconds: true)
+            }
         } header: {
-            Text("Timing")
+            Text("Repetition")
         } footer: {
-            Text("Core Haptics allows up to 30 seconds per continuous event. This app allows 1–8 pulses and 0–2 seconds between scheduled events. A release tail can overlap that gap.")
+            Text("Choose how many times the haptic plays. For a single vibration, leave Repetitions at 1. Increase it to test a repeating pattern, then adjust Gap to change the spacing between vibrations.")
         }
     }
 }

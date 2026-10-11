@@ -16,8 +16,8 @@
 
 ## Verification and repository hygiene
 
-- After app changes, run affected unit and/or UI tests through Xcode MCP, then finish with a normal build. For layout changes, check compact screens, light/dark appearance, and accessibility text sizes.
-- Simulator tests verify requests, pattern construction, and UI; they cannot verify physical vibration. Report the tested simulator/runtime and unexecuted hardware and iOS 26.0 minimum-runtime checks. Do not present historical results in VERIFICATION.md as checks run for the current change.
+- After app changes, run affected unit tests through Xcode MCP, then finish with a normal build. UI tests are intentionally excluded at the user's request. For layout changes, review compact screens, light/dark appearance, and accessibility text sizes when simulator interaction is available; report any unexecuted checks.
+- Simulator unit tests verify requests and pattern construction; they cannot verify physical vibration. Report the tested simulator/runtime and unexecuted hardware and iOS 26.0 minimum-runtime checks. Do not present historical results in VERIFICATION.md as checks run for the current change.
 - Update README.md when behavior or setup changes, and VERIFICATION.md when recording new checks or limitations. Record failed or unavailable checks honestly.
 - Do not install on physical devices or change repository visibility without an explicit request. Keep personal signing settings, credentials, build output, and Xcode user state out of Git. Preserve unrelated user changes.
 

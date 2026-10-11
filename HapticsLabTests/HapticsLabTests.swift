@@ -13,14 +13,14 @@ final class HapticsLabTests: XCTestCase {
 
     func testDefaultTransientTiming() throws {
         let events = try CustomHapticConfiguration.defaults.events()
-        XCTAssertEqual(events.count, 2)
+        XCTAssertEqual(events.count, 1)
         XCTAssertEqual(events[0].time, 0)
-        XCTAssertEqual(events[1].time, 0.12, accuracy: 0.0001)
         XCTAssertTrue(events.allSatisfy { $0.duration == 0 })
     }
 
     func testContinuousToggleSelectsEventTypeAndRemembersDuration() throws {
         var configuration = CustomHapticConfiguration.defaults
+        configuration.pulseCount = 2
         let limits = try referenceCapabilities()
         let capabilities = HapticCapabilities(supportsHaptics: true,
                                              events: [.transient: limits, .continuous: limits])
@@ -135,6 +135,7 @@ final class HapticsLabTests: XCTestCase {
         configuration.intensity = 0
         configuration.sharpness = 0.123456
         configuration.gap = 0.123456
+        configuration.pulseCount = 2
         let events = try HapticsController.hapticEvents(configuration, capabilities: referenceCapabilities())
         XCTAssertEqual(events[1].relativeTime, 0.123456, accuracy: 0.0000001)
         XCTAssertEqual(events[0].eventParameters.first { $0.parameterID == .hapticIntensity }?.value, 0)
@@ -200,7 +201,7 @@ final class HapticsLabTests: XCTestCase {
         draft.pulseCount = 6
         XCTAssertEqual(accepted.intensity, 0.65)
         XCTAssertEqual(accepted.attack, 0)
-        XCTAssertEqual(try accepted.events().count, 2)
+        XCTAssertEqual(try accepted.events().count, 1)
     }
 
     func testRepeatedNativeRequestsRemainDistinct() {

@@ -12,7 +12,7 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
     static let pulseRange = 1...8
     static let gapRange = 0.0...2.0
     static let defaults = Self(intensity: 0.65, sharpness: 0.35,
-                               duration: 0.2, pulseCount: 2, gap: 0.12)
+                               duration: 0.2, pulseCount: 1, gap: 0.12)
 
     var isContinuous = false
     var kind: EventKind { isContinuous ? .continuous : .transient }
@@ -82,7 +82,7 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
         var errorDescription: String? {
             switch self {
             case .invalidParameters:
-                "Use finite values, a continuous duration above 0 and up to 30 seconds, 1 to 8 pulses, and a gap from 0 to 2 seconds."
+                "Use finite values, a continuous duration above 0 and up to 30 seconds, 1 to 8 repetitions, and a gap from 0 to 2 seconds."
             case .invalidCapabilities:
                 "The device returned invalid parameter limits."
             case .unavailableParameter:

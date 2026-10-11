@@ -1,9 +1,13 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct CustomHapticsView: View {
     @Bindable var controller: HapticsController
     @State private var configuration: CustomHapticConfiguration
     @State private var presentedHelp: HapticHelpTopic?
+    @State private var exportDocument: HapticSwiftDocument?
+    @State private var isExporting = false
+    @State private var exportError: String?
 
     init(controller: HapticsController) {
         self.controller = controller
@@ -52,6 +56,24 @@ struct CustomHapticsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
+                    do {
+                        exportDocument = HapticSwiftDocument(
+                            source: try HapticSwiftExport.source(for: configuration, capabilities: limits))
+                        isExporting = true
+                    } catch {
+                        exportError = error.localizedDescription
+                    }
+                } label: {
+                    Label("Export Swift code", systemImage: "square.and.arrow.up")
+                        .labelStyle(.iconOnly)
+                }
+                .foregroundStyle(validationMessage == nil ? Color.primary : Color.secondary)
+                .disabled(validationMessage != nil)
+                .accessibilityIdentifier("custom.export")
+                .accessibilityHint(validationMessage ?? "")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
                     if controller.isPlaying {
                         controller.stop()
                     } else {
@@ -73,6 +95,20 @@ struct CustomHapticsView: View {
         }
         .sheet(item: $presentedHelp) { topic in
             HapticHelpSheet(topic: topic)
+        }
+        .fileExporter(isPresented: $isExporting, document: exportDocument,
+                      contentType: .swiftSource, defaultFilename: "CustomHaptic.swift") { result in
+            if case .failure(let error) = result {
+                exportError = error.localizedDescription
+            }
+        }
+        .alert("Export unavailable", isPresented: Binding(
+            get: { exportError != nil },
+            set: { if !$0 { exportError = nil } }
+        )) {
+            Button("OK", role: .cancel) { exportError = nil }
+        } message: {
+            Text(exportError ?? "")
         }
         .onDisappear { controller.stop() }
         .alert("Playback unavailable", isPresented: Binding(
@@ -138,19 +174,19 @@ private struct HapticSectionHeader: View {
     var body: some View {
         HStack {
             Text(topic.title)
-            Spacer()
             Button {
                 presentedHelp = topic
             } label: {
                 Image(systemName: "info.circle")
                     .font(.body)
-                    .padding()
+                    .padding(.vertical)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .foregroundStyle(.primary)
             .accessibilityLabel(Text(topic.informationLabel))
             .accessibilityIdentifier("custom.info." + topic.rawValue)
+            Spacer()
         }
         .textCase(nil)
     }

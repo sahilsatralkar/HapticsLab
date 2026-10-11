@@ -112,7 +112,7 @@ private struct HapticTileLabel: View {
 
     var body: some View {
         Text(title)
-            .font(.title3)
+            .font(.body.weight(.medium))
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
     }

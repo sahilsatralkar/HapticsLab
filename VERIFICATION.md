@@ -1,5 +1,15 @@
 # Verification
 
+## System button typography — 11 October 2026
+
+Changed the shared System haptics button label from `.title3` to `.body.weight(.medium)` through Xcode MCP. All thirteen labels use the new style. Dynamic Type, natural wrapping, equal-height layout, and native padding are preserved. README now describes the style and identifies the supplied Home screenshot as predating this typography change.
+
+- Reviewed modifier usage with the external exported `swiftui-specialist` guidance referenced below, not a locally exposed built-in Xcode skill.
+- Xcode MCP confirmed the active HapticsLab destination as iPhone 13 mini simulator / iOS 26.5, using the iOS 27.0 simulator SDK. The exact Xcode application version was not reported.
+- Light and dark previews rendered on Xcode's selected preview device, iPhone Duo / iOS 27.1. All thirteen labels fit on one line in both captures. This is preview-only visual evidence; compact-device layout remains unverified because the preview renderer used a different destination.
+- Final normal build passed with no reported errors: `BuildProject-Log-20261011-164332.txt`. No unit-tested behavior changed, so unit tests were not rerun; no UI tests were added or run. Physical-device, iPad, accessibility-size, interaction, and minimum-runtime checks were not performed.
+- Documentation references and Git whitespace checks passed. Existing local signing changes remain untouched and uncommitted.
+
 ## Community documentation, security, and release — 11 October 2026
 
 Implemented the four approved readiness follow-ups:

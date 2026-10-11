@@ -17,7 +17,7 @@ It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, 
   </tr>
 </table>
 
-These latest screenshots were supplied by the maintainer and show light appearance. On Home, scroll down to reach Custom, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
+These screenshots were supplied by the maintainer and show light appearance. The Home screenshot predates the change to body text with medium weight on System haptics buttons. On Home, scroll down to reach Custom, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
 
 ## Contents
 
@@ -77,7 +77,7 @@ To run the unit tests, choose **Product → Test** or press **⌘U**. See [Tests
 
 ## System haptics
 
-Tap a button on Home to try Apple's native feedback with its default parameters. This gives you a baseline to compare with your custom patterns.
+Tap a button on Home to try Apple's native feedback with its default parameters. This gives you a baseline to compare with your custom patterns. Button labels use the native body text style with medium weight, scale with Dynamic Type, and wrap when needed.
 
 | Button | SwiftUI API |
 | --- | --- |

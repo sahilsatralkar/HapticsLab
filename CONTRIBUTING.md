@@ -14,7 +14,7 @@ Contributions are welcome through focused pull requests. Start with [README.md](
 
 This project intentionally uses contributor-run and maintainer-run verification. **GitHub Actions is not required and no CI workflow is configured.** Local unit tests are still automated tests; contributors and the maintainer start them in Xcode. The absence of a CI check is not a failed check or an incomplete contribution.
 
-Human contributors can use Xcode directly; no AI assistant or MCP setup is required. Coding agents must follow [AGENTS.md](AGENTS.md), including its Xcode MCP requirements.
+Contributors can use Xcode directly; no AI assistant or Xcode MCP setup is required to submit a pull request. Follow the verification steps below and report the tools used, results, and any unexecuted checks.
 
 For app changes:
 

@@ -12,8 +12,8 @@ It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, 
     <th>Custom — Pattern controls</th>
   </tr>
   <tr>
-    <td><img src="Docs/Screenshots/home.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons using medium-weight body text, Custom navigation, device information, and the Apple Pencil Pro footnote"></td>
-    <td><img src="Docs/Screenshots/custom.png" width="300" alt="Custom screen with Play and Share, intensity and sharpness sliders, Continuous toggle, Repetitions, and the beginning of the Envelope controls"></td>
+    <td><img src="Docs/Screenshots/home-3239.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons using medium-weight body text, Custom navigation, device information, and the Apple Pencil Pro footnote"></td>
+    <td><img src="Docs/Screenshots/custom-3240.png" width="300" alt="Custom screen with Play and Share, intensity and sharpness sliders, Continuous toggle, Repetitions, and the beginning of the Envelope controls"></td>
   </tr>
 </table>
 

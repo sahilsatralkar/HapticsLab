@@ -1,5 +1,11 @@
 # Verification
 
+## Screenshot URL refresh — 11 October 2026
+
+After the maintainer reported seeing older README screenshots, GitHub's contents API confirmed that the published image blob hashes and README references matched the latest supplied captures. Caching is a likely explanation, not a confirmed diagnosis. Renamed the current images to `home-3239.png` and `custom-3240.png` and updated README to give each capture a fresh URL. Image contents are unchanged. Historical verification entries retain the filenames used at the time.
+
+Checked the README image paths, byte-for-byte equality with the supplied originals, and Git whitespace. No app changes, builds, tests, or signing changes were made.
+
 ## Latest supplied screenshots — 11 October 2026
 
 Replaced the README Home and Custom images with the maintainer-supplied `IMG_3239.PNG` and `IMG_3240.PNG`, respectively. Both are unchanged 1206 × 2622 PNGs, verified byte-for-byte against the supplied files. Reviewed the attached images: Home shows the medium-weight body labels, all thirteen system choices, Custom navigation, device information, and Pencil footnote; Custom shows the top of the form. Updated README alt text and caption and removed the obsolete typography warning.

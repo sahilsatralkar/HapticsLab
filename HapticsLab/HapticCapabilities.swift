@@ -103,7 +103,7 @@ nonisolated struct HapticCapabilities: Equatable, Sendable {
 
 nonisolated struct HapticDeviceInfo: Equatable, Sendable {
     let model: String
-    let system: String
+    let systemVersion: String
     let hardwareIdentifier: String
     let isSimulator: Bool
 
@@ -111,7 +111,7 @@ nonisolated struct HapticDeviceInfo: Equatable, Sendable {
         let device = UIDevice.current
         #if targetEnvironment(simulator)
         let model = ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "Simulator"
-        return Self(model: device.model, system: "\(device.systemName) \(device.systemVersion)",
+        return Self(model: device.model, systemVersion: device.systemVersion,
                     hardwareIdentifier: model, isSimulator: true)
         #else
         var size = 0
@@ -122,7 +122,7 @@ nonisolated struct HapticDeviceInfo: Equatable, Sendable {
                 identifier = String(decoding: buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, as: UTF8.self)
             }
         }
-        return Self(model: device.model, system: "\(device.systemName) \(device.systemVersion)",
+        return Self(model: device.model, systemVersion: device.systemVersion,
                     hardwareIdentifier: identifier, isSimulator: false)
         #endif
     }

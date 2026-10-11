@@ -20,7 +20,7 @@ final class HapticsLabUITests: XCTestCase {
         XCTAssertGreaterThan(right.frame.minX, left.frame.maxX)
         XCTAssertFalse(app.staticTexts["Tap a pattern to feel it."].exists)
         for id in ["light", "medium", "heavy", "soft", "solid", "rigid", "impact",
-                   "selection", "success", "warning", "error", "alignment"] {
+                   "selection", "success", "warning", "error"] {
             let button = app.buttons["haptics." + id]
             reveal(button, in: app)
             XCTAssertGreaterThanOrEqual(button.frame.height, 44)
@@ -73,22 +73,32 @@ final class HapticsLabUITests: XCTestCase {
             XCTAssertTrue(app.navigationBars["Haptics Lab"].exists)
             attach(app, "Haptics-" + appearance + "-" + size)
             let custom = app.buttons["haptics.custom"]
-            XCTAssertEqual(custom.label, "Custom haptics testing")
             reveal(custom, in: app)
-            let left = app.buttons["haptics.error"]
-            let right = app.buttons["haptics.alignment"]
-            XCTAssertEqual(custom.frame.minX, left.frame.minX, accuracy: 2)
-            XCTAssertEqual(custom.frame.maxX, right.frame.maxX, accuracy: 2)
-            XCTAssertGreaterThan(custom.frame.height, left.frame.height * 0.9)
+            XCTAssertEqual(custom.label, "Custom haptics testing")
+            XCTAssertTrue(app.cells.containing(.button, identifier: "haptics.custom").firstMatch.exists)
+            let reference = app.buttons["haptics.error"]
+            XCTAssertGreaterThan(custom.frame.width, reference.frame.width)
+            let hapticButtons = app.buttons.matching(NSPredicate(
+                format: "identifier BEGINSWITH %@ AND identifier != %@", "haptics.", "haptics.custom")).allElementsBoundByIndex
+            XCTAssertEqual(hapticButtons.count, 11)
+            for button in hapticButtons {
+                XCTAssertEqual(button.frame.height, reference.frame.height, accuracy: 1, button.identifier)
+            }
             XCTAssertTrue(app.windows.firstMatch.frame.contains(custom.frame))
+            XCTAssertFalse(app.buttons["haptics.alignment"].exists)
             XCTAssertFalse(app.buttons["haptics.canvasAlignment"].exists)
             XCTAssertFalse(app.buttons["haptics.canvasPath"].exists)
             XCTAssertFalse(app.staticTexts["haptics.status"].exists)
             XCTAssertFalse(app.staticTexts["Canvas feedback requires Apple Pencil Pro and a compatible iPad."].exists)
             let device = app.descendants(matching: .any)["haptics.device"].firstMatch
             reveal(device, in: app)
-            XCTAssertTrue(device.label.contains("Detected:"))
-            XCTAssertTrue(device.label.contains("Model identifier:"))
+            XCTAssertTrue(device.label.contains("iPhone model:"))
+            XCTAssertTrue(device.label.contains("iOS version:"))
+            XCTAssertFalse(device.label.contains("Detected:"))
+            XCTAssertFalse(device.label.contains("Model identifier:"))
+            #if targetEnvironment(simulator)
+            XCTAssertTrue(device.label.contains("Custom haptics unavailable."))
+            #endif
             attach(app, "Haptics-bottom-" + appearance + "-" + size)
             reveal(custom, in: app)
             custom.tap()
@@ -109,11 +119,16 @@ final class HapticsLabUITests: XCTestCase {
     }
 
     private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
+        let window = app.windows.firstMatch
         for _ in 0..<12 {
-            if element.exists && element.isHittable { return }
-            app.swipeUp()
+            if element.exists && element.isHittable && window.frame.contains(element.frame) { return }
+            if element.exists && element.frame.midY < window.frame.midY {
+                app.swipeDown()
+            } else {
+                app.swipeUp()
+            }
         }
-        XCTAssertTrue(element.exists && element.isHittable)
+        XCTAssertTrue(element.exists && element.isHittable && window.frame.contains(element.frame))
     }
 
     private func attach(_ app: XCUIApplication, _ name: String) {

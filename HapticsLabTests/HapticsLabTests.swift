@@ -150,7 +150,7 @@ final class HapticsLabTests: XCTestCase {
     func testRepeatedNativeRequestsRemainDistinct() {
         XCTAssertNotEqual(NativeHapticRequest(sequence: 1, haptic: .soft),
                           NativeHapticRequest(sequence: 2, haptic: .soft))
-        XCTAssertEqual(Set(NativeHaptic.allCases.map(\.id)).count, 12)
+        XCTAssertEqual(Set(NativeHaptic.allCases.map(\.id)).count, 11)
     }
 
     func testStopIsSafeAndRepeatableWithoutHardware() {

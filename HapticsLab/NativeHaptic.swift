@@ -1,10 +1,10 @@
 import SwiftUI
 
-/// The system patterns documented to play on iOS. Other platform-only cases are
-/// intentionally excluded. UIKit's impact styles overlap these SwiftUI choices.
+/// Native impact, selection, and notification patterns for iPhone testing.
+/// Canvas feedback is excluded; iOS availability does not guarantee iPhone vibration.
 nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
     case light, medium, heavy, soft, solid, rigid, impact
-    case selection, success, warning, error, alignment
+    case selection, success, warning, error
 
     var id: String { rawValue }
     var title: LocalizedStringResource {
@@ -20,7 +20,6 @@ nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
         case .success: "Success"
         case .warning: "Warning"
         case .error: "Error"
-        case .alignment: "Alignment"
         }
     }
     var symbol: String {
@@ -29,7 +28,6 @@ nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
         case .warning: "exclamationmark.triangle"
         case .error: "xmark.circle"
         case .selection: "switch.2"
-        case .alignment: "align.horizontal.center"
         default: "waveform"
         }
     }
@@ -48,7 +46,6 @@ nonisolated enum NativeHaptic: String, CaseIterable, Identifiable, Sendable {
         case .success: .success
         case .warning: .warning
         case .error: .error
-        case .alignment: .alignment
         }
     }
 }

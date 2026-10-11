@@ -12,7 +12,7 @@ Duration is not an event-parameter ID and this API exposes no device-specific du
 
 Source: [continuous haptic event](https://developer.apple.com/documentation/corehaptics/chhapticevent/eventtype/hapticcontinuous), [event duration](https://developer.apple.com/documentation/corehaptics/chhapticevent/duration).
 
-Home now shows `UIDevice.model`, OS name/version, the hardware model identifier, and custom-haptic support. Simulator identity is labeled separately. `UIDevice.model` can return a generic name such as iPhone; it is not a marketing-model lookup. The raw hardware identifier is displayed rather than guessing a marketing name from a stale lookup table. No personal device name, vendor identifier, or signing information is displayed or stored. Hardware identity is informational; capability decisions use Core Haptics, not model-name comparisons.
+Home shows three lines: `iPhone model: <hardware identifier>`, `iOS version: <system version>`, and the detected custom-haptic support status. Simulators show custom haptics as unavailable. `UIDevice.model` can return a generic name such as iPhone; it is not a marketing-model lookup. The raw hardware identifier is displayed rather than guessing a marketing name from a stale lookup table. No personal device name, vendor identifier, or signing information is displayed or stored. Hardware identity is informational; capability decisions use Core Haptics, not model-name comparisons.
 
 Source: [UIDevice model](https://developer.apple.com/documentation/uikit/uidevice/model).
 
@@ -59,7 +59,11 @@ Sources: [dynamic parameters](https://developer.apple.com/documentation/corehapt
 
 ## Native system feedback and other hardware
 
-The current home catalog keeps default SwiftUI impact weight/flexibility variants, default impact, selection, success, warning, error and alignment. These are system-defined requests, not custom waveforms. UIKit impact/selection/notification generators overlap those categories. Additional native impact intensity is a possible future comparison control; it is distinct from custom Core Haptics intensity.
+The current home catalog keeps 11 default SwiftUI impact weight/flexibility variants, default impact, selection, success, warning and error choices. These are system-defined requests, not custom waveforms. UIKit impact/selection/notification generators overlap those categories. Additional native impact intensity is a possible future comparison control; it is distinct from custom Core Haptics intensity.
+
+Alignment was removed after the user's report of no vibration on their iPhone. Apple's symbol documentation lists iOS and macOS, while its canvas-feedback guide demonstrates SwiftUI alignment feedback with Apple Pencil Pro and a compatible iPad. Those documents do not establish reliable iPhone Taptic output. The earlier catalog treated platform availability too broadly; removal avoids presenting this canvas effect as a confirmed iPhone vibration. This is not a claim that the symbol is unavailable on iOS or exclusively supported by one accessory.
+
+Sources: [alignment](https://developer.apple.com/documentation/swiftui/sensoryfeedback/alignment), [canvas feedback and device-dependent delivery](https://developer.apple.com/documentation/applepencil/playing-haptic-feedback-in-your-app).
 
 `SensoryFeedback.pathComplete` is also documented for iOS, but iOS availability alone does not establish an iPhone Taptic response: Apple's drawing-feedback guidance includes Pencil-specific routing. The removed canvas controls remain removed. Do not add them back or call them confirmed iPhone effects without suitable hardware evidence. `start`/`stop` are documented for watchOS, `increase`/`decrease` for watchOS/visionOS, and `levelChange` for macOS. Their availability in a shared framework does not make them useful iPhone buttons.
 

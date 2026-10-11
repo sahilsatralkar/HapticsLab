@@ -8,6 +8,48 @@ Apple documentation searches covered SwiftUI SensoryFeedback platform support, n
 
 Reviewed with the exported `swiftui-specialist` skill from the user-supplied [xcode27-skills repository](https://github.com/superagents-lab/xcode27-skills/tree/6f9ff8d5ad6000491cb0f483a776b7062e41cd97/swiftui-specialist). Applied separate View boundaries, private state ownership, MainActor observable state, stable enum identities, native modifiers, and LocalizedStringResource for pattern names. This was an external exported skill review; a built-in Xcode skill invocation is not exposed and was not performed. No copied skill content is distributed with this project.
 
+## Remove Alignment — 10 October 2026
+
+Removed the Alignment enum case, label, symbol mapping, and feedback mapping, leaving 11 native haptic choices. The capability study now distinguishes the documented iOS/macOS availability of alignment from confirmed iPhone vibration, noting Apple's Pencil canvas guidance and the user's hardware observation. README remains deferred. SwiftUI review continued with the external guidance referenced above; the existing two-column layout handles the odd button count without fixed sizes or padding changes.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: all 3 affected tests passed (1 unit, 2 UI), covering native identifiers/repeated requests, each remaining button, Alignment's absence, native Custom navigation, footer copy, and compact light/dark/largest-accessibility layout assertions.
+- Final normal build passed with no reported errors. Git diff whitespace check passed.
+- Visual screenshot inspection, physical vibration, and iOS 26.0 minimum-runtime checks were not performed. No physical-device installation was made.
+
+Artifacts: `Test-HapticsLab-2026.10.10_19-24-31-+0530.xcresult`, `BuildProject-Log-20261010-192646.txt` (temporary, not distributed).
+
+## Native Custom navigation row — 10 October 2026
+
+Converted Custom haptics testing into a standard NavigationLink row inside an inset-grouped List. iOS supplies the disclosure chevron, row styling, and navigation behavior. Primary text and native spacing are preserved; no fixed row height or numeric padding was introduced. The 12 haptic buttons retain their two-column, equal-height layout and custom button styling. The device copy is the navigation section's footer. README was not edited. Review continued with the external SwiftUI guidance above and Xcode MCP Apple documentation for list navigation.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: native button dispatch and Custom controls/navigation tests passed. The initial layout test failed because it queried the new list row's label before scrolling it into view.
+- Moved the label assertion after the existing reveal helper. Targeted layout rerun passed in light, dark, and largest accessibility text, checking native list-cell membership, navigation, equal haptic-button heights, and footer copy. The other two tests were not repeated after this test-only ordering correction.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed.
+- Screenshot inspection, physical-device execution, and iOS 26.0 minimum-runtime checks remain unexecuted. Unit tests were not rerun for this UI-only change.
+
+Artifacts: `Test-HapticsLab-2026.10.10_19-19-21-+0530.xcresult` (initial), `Test-HapticsLab-2026.10.10_19-21-45-+0530.xcresult` (targeted), `BuildProject-Log-20261010-192331.txt` (normal build). Temporary artifacts are not distributed.
+
+## Device footer copy — 10 October 2026
+
+The footer now uses three lines: `iPhone model: <detected hardware identifier>`, `iOS version: <system version>`, and `Custom haptics supported.` or `Custom haptics unavailable.` according to support (unavailable on simulators). No marketing-model lookup was added. Kept native padding, semantic colors, and combined accessibility labeling. README was not edited; SwiftUI review continued with the external guidance identified above.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: the affected UI test passed for light, dark, and largest accessibility text, checking the new labels, unavailable simulator status, and home layout.
+- Final normal build passed with no reported errors. Git diff whitespace check passed.
+- Visual screenshot inspection, physical device execution, and iOS 26.0 minimum-runtime checks were not performed. Unit tests were not rerun for this copy/display change.
+
+Artifacts: `Test-HapticsLab-2026.10.10_19-16-29-+0530.xcresult`, `BuildProject-Log-20261010-191754.txt` (temporary, not distributed).
+
+## Equal home-button heights — 10 October 2026
+
+All 13 home buttons now share the tallest intrinsic padded-label height, including the full-width Custom CTA. Removed Custom's additional vertical padding. A SwiftUI Layout measures the labels at their actual column widths, uses native ViewSpacing preferences, and responds to Dynamic Type and layout direction. Button padding remains `.padding()` with no numeric inset or fixed height. README remains deferred. Review used the external SwiftUI guidance referenced above and Xcode MCP Apple documentation for Layout and ViewSpacing.
+
+- Xcode MCP, iPhone 13 mini simulator, iOS 26.5: native dispatch test passed. The first appearance/layout run passed its height comparisons but failed the full-button visibility assertion because the scroll helper accepted partially visible controls.
+- Updated the helper to scroll in either direction until the whole control is visible. Targeted rerun passed both the light/dark/largest-accessibility layout test (all 13 heights equal) and the Custom controls/navigation test. The native dispatch test was not repeated after this test-helper-only correction.
+- Final normal build succeeded with no reported errors. Git diff whitespace check passed.
+- Screenshot inspection, physical hardware, and iOS 26.0 minimum-runtime checks remain unexecuted. No physical installation was performed. Unit tests were not rerun for this layout change.
+
+Artifacts: `Test-HapticsLab-2026.10.10_19-10-36-+0530.xcresult` (initial), `Test-HapticsLab-2026.10.10_19-13-15-+0530.xcresult` (targeted), `BuildProject-Log-20261010-191452.txt` (normal build). Temporary artifacts are not distributed.
+
 ## Explicit rounded button corners — 10 October 2026
 
 Home buttons now use a continuous RoundedRectangle with a 12-point corner radius for background, border, and hit shape. Custom Play/Stop controls use the native rounded-rectangle border shape with the same explicit radius. Native padding, semantic colors, and existing sizing remain intact. README was not edited. Review continued with the external SwiftUI guidance identified above.

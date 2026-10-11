@@ -193,7 +193,7 @@ The current **HapticsLabTests** target contains **27 unit tests**:
 | [HapticNumberInputTests.swift](HapticsLabTests/HapticNumberInputTests.swift) | Numeric validation, boundaries, locale input, precision, retained drafts, and Reset |
 | [HapticSwiftExportTests.swift](HapticsLabTests/HapticSwiftExportTests.swift) | Exported parameters/timing, unavailable parameters, invalid drafts, attachment snapshots, independent files, cleanup, and preparation failures |
 
-Use **Product → Test**, then **Product → Build** for app changes. UI tests are intentionally excluded. There is currently no GitHub Actions CI workflow. Test names and count describe existing coverage, not proof that a new checkout has passed.
+Verification is intentionally run locally by contributors and the maintainer; **GitHub Actions is not required and no CI workflow is configured**. Run affected unit tests in Xcode (or the full suite with **Product → Test** when appropriate), then finish app changes with **Product → Build**. UI tests are intentionally excluded. Test names and count describe existing coverage, not proof that a new checkout has passed. See [manual verification](CONTRIBUTING.md#manual-verification--no-github-actions-required) for the workflow and what to report.
 
 [VERIFICATION.md](VERIFICATION.md) records dated runs, including 27 passing unit tests on the iPhone 13 mini simulator with iOS 26.5, subsequent targeted checks, and normal builds. These are historical results. Documentation-only edits need content, link, and diff checks, not a new test run.
 
@@ -206,7 +206,7 @@ Read [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATION.md)
 1. Inspect repository state and preserve unrelated changes. Use **Xcode MCP** for source/resource inspection and edits, project changes, Apple documentation, builds, tests, and simulator verification. Shell/file tools may handle repository documentation and Git. Report unavailable required MCP operations instead of silently substituting shell-based Xcode commands.
 2. Preserve iOS 26.0, Swift 6, native frameworks, MainActor ownership, Sendable request snapshots, strict validation, cancellation, generation checks, and engine-identity checks. Keep the UI native with semantic colors and native padding.
 3. Review SwiftUI edits using available guidance, identifying whether it is a locally exposed skill or an external exported copy. Do not claim an unavailable skill was invoked.
-4. Run affected unit tests and finish app changes with a normal build. Do not reintroduce UI tests. Report the actual simulator/runtime, skipped checks, and hardware limitations. Source edits, simulator tests, and physical vibration checks are different evidence.
+4. Run affected unit tests and finish app changes with a normal build through Xcode MCP. Do not reintroduce UI tests or add GitHub Actions/required CI checks unless the maintainer explicitly requests a workflow change. Report the actual simulator/runtime, skipped checks, and hardware limitations. Source edits, simulator tests, and physical vibration checks are different evidence.
 5. Keep personal signing values, credentials, Xcode user state, and build output out of commits. Inspect the full staged diff, including signing configuration, before committing. Never install on physical hardware or change repository visibility without an explicit request.
 6. Keep feature documentation aligned with the code when behavior changes. Do not add capabilities merely because an Apple API exists; availability alone does not establish an iPhone vibration effect.
 
@@ -215,6 +215,8 @@ Read [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATION.md)
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for project constraints. Fork the repository, make a focused change on a branch, and open a pull request describing the problem, resulting behavior, and verification performed. For haptic reports, include the hardware identifier, iOS version, selected values, and whether testing used a physical device or simulator.
+
+Human contributors use Xcode directly; Xcode MCP is required only for coding agents. The maintainer reviews and locally verifies contributions before merging into `main`. Owner-only merging is a separate access policy and does not depend on GitHub Actions; GitHub enforcement must be configured separately.
 
 Keep contributions native and dependency-free. Separate reproducible software behavior from subjective tactile observations, and do not include personal signing settings. Contributions use the repository's [MIT license](LICENSE).
 

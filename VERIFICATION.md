@@ -1,5 +1,11 @@
 # Verification
 
+## Manual contribution verification — 11 October 2026
+
+Expanded CONTRIBUTING.md with the fork/branch/PR workflow, contributor-run and maintainer-run local verification, required PR evidence, and final-revision review. GitHub Actions is intentionally not required; local unit tests and normal builds remain part of app verification. Human contributors may use Xcode directly, while agents retain the Xcode MCP requirement. README and AGENTS.md now describe the same policy and distinguish owner-only merging from CI. Documentation-only checks, optional dedicated accessibility checks, excluded UI tests, and honest hardware limitations remain explicit.
+
+Content, local links/image references/anchors, and Git whitespace checks passed. No app changes, tests, builds, hardware checks, GitHub Actions configuration, or repository permission changes were performed.
+
 ## Agent guidance audit — 11 October 2026
 
 Updated AGENTS.md against the current code and maintainer preferences: replaced the obsolete ten-second cap and square-button requirement, made dedicated accessibility checks optional, and clarified device-derived ranges, numeric validation, session draft retention, envelope semantics, export parity, and playback safeguards. Clarified MCP versus documentation/Git tool boundaries and actual-destination reporting. Added the owner's main-update policy without claiming GitHub enforcement. Existing signing prohibitions remain intact. Removed README's now-resolved warning about stale AGENTS guidance; the capability-study follow-up remains.

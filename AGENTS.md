@@ -31,7 +31,9 @@ These instructions apply to coding agents working in this repository. Human cont
 
 ## Verification and documentation
 
+- Verification is intentionally initiated locally by contributors and the maintainer, as documented in [CONTRIBUTING.md](CONTRIBUTING.md). GitHub Actions is not required. Do not add Actions workflows or required CI status checks unless the maintainer explicitly requests a workflow change; absence of CI is not a readiness blocker. Human contributors may use Xcode directly; coding agents still use Xcode MCP.
 - For app changes, run affected unit tests through Xcode MCP, then finish with a normal build. Do not add unrelated tests for copy-only edits. **UI tests are intentionally excluded; do not reintroduce them.**
+- In PRs and handoffs, report tests and build results, the Xcode version and actual destination/runtime, relevant manual flows, and skipped or failed checks. The maintainer reviews and locally verifies the final revision before merging; repeat checks affected by subsequent changes. Documentation-only changes use documentation checks rather than app tests/builds.
 - Check the actual run destination before tests or installation. Use a simulator unless physical-device installation is explicitly requested. Record the destination/runtime reported by the operation; preview rendering may use a different destination from the active scheme.
 - For layout changes, review a compact screen and light/dark appearance when supported MCP operations are available. Identify preview-only evidence and any unexecuted checks. Do not imply that screenshots establish successful interactions or physical vibration.
 - Simulator unit tests verify requests, validation, pattern construction, and export logic; they cannot verify tactile output. Report relevant unexecuted physical-device and iOS 26.0 minimum-runtime checks. Keep historical results clearly distinguished from checks run for the current change.
@@ -42,7 +44,7 @@ These instructions apply to coding agents working in this repository. Human cont
 
 - Keep changes focused and preserve local signing settings, Xcode user state, credentials, and build output outside commits. Stage only files belonging to the authorized task and inspect the complete staged diff before every commit.
 - Contributions should use a branch and pull request. **Only the repository owner, `sahilsatralkar`, may authorize updates or merges into upstream `main`.** Agents acting for other contributors must submit a PR rather than update upstream `main`. Honor the owner's explicit branch, commit, and push instructions.
-- This file documents maintainer policy; it does not enforce GitHub permissions. Verify actual branch protections separately and never claim owner-only merging is enforced without evidence from GitHub.
+- This file documents maintainer policy; it does not enforce GitHub permissions. Owner-only merging is independent of GitHub Actions. Verify actual branch protections separately and never claim owner-only merging is enforced without evidence from GitHub.
 - Do not change repository visibility, access permissions, or branch protections without an explicit request. Do not rewrite published history without explicit authorization.
 
 ## Development team and signing: never commit

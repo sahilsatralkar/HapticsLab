@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes focus on the latest release (currently **v1.0**) and ongoing development on `main`. Older releases do not receive separate security backports. Please include your tag or commit when reporting a problem.
+Security fixes focus on the latest release (currently **v1.1**) and ongoing development on `main`. Older releases do not receive separate security backports. Please include your tag or commit when reporting a problem.
 
 ## Report a vulnerability privately
 

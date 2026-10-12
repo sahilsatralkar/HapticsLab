@@ -1,5 +1,16 @@
 # Verification
 
+## v1.1 — Export device metadata — 12 October 2026
+
+Added exporting-device comments beside the existing Swift file header: device type and hardware identifier, iOS/iPadOS version, and Simulator or Physical device. The exporter uses `HapticDeviceInfo.detect()` by default, matching Home's detection, and accepts an immutable device snapshot for deterministic tests. Metadata is descriptive only; generated playback code, validation, and destination-device capability checks are unchanged. App version is 1.1, build 2, updated through Xcode MCP. README, the capability study, and the security policy were updated for this release.
+
+- Added regression coverage for iPhone, iPad, simulator, and unavailable hardware identifiers; asserted metadata is in the comment header, generated playback code is identical across device snapshots, and UTF-8 share attachments preserve the complete source. A separate test verifies the default runtime detection path.
+- Xcode MCP: discovered the workspace, switched from the selected physical iPhone to iPhone 13 mini simulator / iOS 26.5, and ran all 29 unit tests: 29 passed, 0 failed, 0 skipped. Finished with a successful normal build and no reported errors. The destination reported the iOS 27.0 simulator SDK; the exact Xcode application version was not reported.
+- No UI layout changed. No UI tests, physical-device installation, tactile checks, manual sharing into other apps, independent generated-file compilation, or minimum iOS/iPadOS 26.0 execution was performed. iPad metadata was tested with a fixture, not an iPad runtime.
+- The cleanup shutdown request reported that the test simulator was already shut down. Quit Simulator and confirmed no booted devices remained. Documentation references and Git whitespace checks passed. Version-only project changes were selected for staging, preserving local personal signing settings outside the commit.
+
+Artifacts: `Test-HapticsLab-2026.10.12_11-56-29-+0530.xcresult` (29 passed), `BuildProject-Log-20261012-115725.txt` (normal build). Temporary artifacts are not distributed.
+
 ## Screenshot URL refresh — 11 October 2026
 
 After the maintainer reported seeing older README screenshots, GitHub's contents API confirmed that the published image blob hashes and README references matched the latest supplied captures. Caching is a likely explanation, not a confirmed diagnosis. Renamed the current images to `home-3239.png` and `custom-3240.png` and updated README to give each capture a fresh URL. Image contents are unchanged. Historical verification entries retain the filenames used at the time.

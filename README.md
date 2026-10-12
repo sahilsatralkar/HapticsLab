@@ -166,6 +166,16 @@ The file contains `ExportedHapticView` and `ExportedHapticPlayer`, using SwiftUI
 
 Each export captures your **current draft**, including repetition, gap, and the parameters available on the exporting device. It uses the same validation, timing, and `Float` conversion as playback. Later edits won't change an already shared file.
 
+The header also records the exporting device type and hardware identifier, its iOS/iPadOS version, and whether it is a simulator or physical device. For example:
+
+```swift
+// Exported from device: iPhone (iPhone18,3)
+// iOS/iPadOS version: 27.0.1
+// Environment: Physical device
+```
+
+These comments capture where the file was exported, so testers can compare results across devices. They don't describe the device that later runs the file or determine haptic support.
+
 The generated player checks the destination device's support and parameter ranges, provides Play/Stop, handles errors and interruptions, and stops when its view disappears or the app becomes inactive. Try the result on your destination device: the same values may feel different on different hardware.
 
 Share is disabled while the configuration is invalid. If file preparation or sharing fails, the app shows an error. Each share uses its own temporary file, which stays available through sharing and is cleaned up when the sheet is dismissed.
@@ -211,19 +221,19 @@ When adding a parameter, keep validation, capability mappings, controls, export,
 
 ## Tests and verification
 
-The **HapticsLabTests** target has **27 unit tests**:
+The **HapticsLabTests** target has **29 unit tests**:
 
 | File | What it covers |
 | --- | --- |
 | [HapticsLabTests.swift](HapticsLabTests/HapticsLabTests.swift) | Timing, mode switches, full event duration, smooth values, device ranges, unavailable parameters, envelope encoding, snapshots, distinct native requests, and repeatable Stop |
 | [HapticNumberInputTests.swift](HapticsLabTests/HapticNumberInputTests.swift) | Numeric validation, boundaries, locale input, precision, retained drafts, and Reset |
-| [HapticSwiftExportTests.swift](HapticsLabTests/HapticSwiftExportTests.swift) | Exported parameters/timing, unavailable parameters, invalid drafts, attachment snapshots, independent files, cleanup, and preparation failures |
+| [HapticSwiftExportTests.swift](HapticsLabTests/HapticSwiftExportTests.swift) | Exported parameters/timing, device metadata and runtime detection, unavailable parameters, invalid drafts, attachment snapshots, independent files, cleanup, and preparation failures |
 
 Run affected unit tests in Xcode, or choose **Product → Test** for the full suite. Finish app changes with **Product → Build**. We run verification locally: **GitHub Actions isn't required, and no CI workflow is configured.** UI tests are intentionally excluded. The [contribution guide](CONTRIBUTING.md#manual-verification--no-github-actions-required) explains the manual checks and what to include in a PR.
 
 For documentation-only changes, check the content, links, images, and diff; there's no need to build or run app tests.
 
-[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including a 27-test pass on the iPhone 13 mini simulator with iOS 26.5 and later targeted checks. Those results describe those runs, so please run the relevant checks for your own changes.
+[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including the v1.1 29-test pass and normal build on the iPhone 13 mini simulator with iOS 26.5. Those results describe those runs, so please run the relevant checks for your own changes.
 
 Physical vibration, envelope feel, hardware interruptions, the minimum iOS 26.0 runtime, iPad layout, and sharing into other apps still need verification in the recorded checks. Screenshots show the interface, but don't verify those behaviors. Test physical playback before shipping code based on this sample.
 

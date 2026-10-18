@@ -1,5 +1,13 @@
 # Verification
 
+## v1.2 release preparation — 18 October 2026
+
+Finalized README, the changelog, and the capability study for v1.2, app version 1.2/build 3, at the maintainer's explicit request to tag and publish the release. The release adds configurable intensity/sharpness curves and matching Swift exports. The annotated tag is intended to point to the final documentation commit on `main`; publication status is available on the [GitHub release page](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2).
+
+This release uses the 18 October evidence below: 40 unit tests passed for the curve implementation, generated source compiled alongside the app, constrained light/dark previews were reviewed, and the version bump received a successful normal build. The destination was iPhone 13 mini simulator / iOS 26.5 with the iOS 27.1 simulator SDK; the exact Xcode application version was not reported. No app source or version settings changed during release preparation, so tests and builds were not repeated. Physical feel, share-sheet interaction, iPad, separate consumer-app integration, and minimum-runtime checks remain unverified as recorded below.
+
+Documentation content, local links/anchors/image references, and Git whitespace were checked. Existing local project/signing settings are excluded from the release commit. This is a source release with no prebuilt app binary or GitHub Actions workflow.
+
 ## Version 1.2 and community documentation — 18 October 2026
 
 Incremented the app to **1.2, build 3** through Xcode MCP and confirmed both build settings. Added CHANGELOG.md and updated README, CONTRIBUTING, SECURITY, agent guidance, and the capability study. The documentation distinguishes the unreleased curve controls on `main` from the latest published GitHub release, v1.1, confirmed through GitHub's release list. No tag or release was created.

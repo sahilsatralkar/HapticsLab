@@ -2,7 +2,7 @@
 
 This file records user-facing changes by app version. **Unreleased** entries describe development on `main`; published versions link to their GitHub releases. Build numbers identify app builds within that history.
 
-## 1.2 — Unreleased
+## [1.2](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2) — 2026-10-18
 
 App version **1.2**, build **3**.
 
@@ -21,7 +21,7 @@ App version **1.2**, build **3**.
 
 The point count is an app limit. Envelope controls still affect curve playback. Physical feel, share-sheet interaction, and minimum-runtime coverage remain subject to the limitations in [VERIFICATION.md](VERIFICATION.md#configurable-intensity-and-sharpness-curves--18-october-2026).
 
-[Changes since v1.1](https://github.com/sahilsatralkar/HapticsLab/compare/v1.1...main).
+[Changes since v1.1](https://github.com/sahilsatralkar/HapticsLab/compare/v1.1...v1.2).
 
 ## [1.1](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.1) — 2026-10-12
 

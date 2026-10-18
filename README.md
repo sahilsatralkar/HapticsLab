@@ -4,7 +4,7 @@ Explore Apple's system haptics, build your own vibration patterns, and take the 
 
 It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, **SwiftUI**, and **Core Haptics**, and has **no third-party dependencies**. You can explore the interface in a simulator, but you'll need compatible physical hardware to feel the feedback.
 
-`main` currently contains **1.2 (build 3), in development**, including configurable intensity/sharpness curves. The latest published release is [v1.1](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.1), which predates those curve controls. Build `main` to try the new controls, or choose a published release for its recorded version. See the [changelog](CHANGELOG.md) for changes by version.
+The latest release is [**v1.2 (build 3)**](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2), with configurable intensity/sharpness curves and matching Swift exports. Choose the `v1.2` tag to use this release, or build `main` for ongoing development. See the [changelog](CHANGELOG.md) for changes by version.
 
 ## Screenshots
 

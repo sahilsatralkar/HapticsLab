@@ -4,6 +4,8 @@ Explore Apple's system haptics, build your own vibration patterns, and take the 
 
 It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, **SwiftUI**, and **Core Haptics**, and has **no third-party dependencies**. You can explore the interface in a simulator, but you'll need compatible physical hardware to feel the feedback.
 
+`main` currently contains **1.2 (build 3), in development**, including configurable intensity/sharpness curves. The latest published release is [v1.1](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.1), which predates those curve controls. Build `main` to try the new controls, or choose a published release for its recorded version. See the [changelog](CHANGELOG.md) for changes by version.
+
 ## Screenshots
 
 <table>
@@ -21,6 +23,7 @@ These screenshots were supplied by the maintainer and show light appearance. The
 
 ## Contents
 
+- [Changelog and versions](CHANGELOG.md)
 - [Features](#features)
 - [Build and run](#build-and-run)
 - [System haptics](#system-haptics)
@@ -117,6 +120,16 @@ With Continuous on, enable **Vary over time** to replace the constant Intensity 
 Core Haptics interpolates linearly between points. Point values describe the requested event intensity and sharpness before the Envelope's effect. Internally, intensity curves multiply a base event intensity and sharpness curves add an offset. The app validates both event ranges and device-reported dynamic ranges, including the combined Float values; unsupported combinations block Play and Share and show an inline error.
 
 Each repetition restarts the complete curve. The existing Envelope still affects the result; for initial curve experiments, try Sustained on and minimum Attack/Release values. Sharpness changes tactile character, not engine RPM or a directly selectable vibration frequency. Test the feel on supported physical hardware.
+
+For a starting rise-and-fall experiment, set Duration to **1.2 s**, keep one repetition, and edit the three points as follows:
+
+| Point | Time | Intensity | Sharpness |
+| --- | --- | --- | --- |
+| Start | 0 s | 0.15 | 0.15 |
+| Point 2 | 0.4 s | 0.95 | 0.65 |
+| End | 1.2 s | 0 | 0.20 |
+
+Use Sustained on and minimum Attack/Release values initially, then adjust one setting at a time. These are experimental values, not a calibrated engine simulation; record what you feel on your device.
 
 ### Repetition
 
@@ -249,7 +262,7 @@ Run affected unit tests in Xcode, or choose **Product → Test** for the full su
 
 For documentation-only changes, check the content, links, images, and diff; there's no need to build or run app tests.
 
-[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including the v1.1 29-test pass and normal build on the iPhone 13 mini simulator with iOS 26.5. Those results describe those runs, so please run the relevant checks for your own changes.
+[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including the 40-test curve-feature pass on the iPhone 13 mini simulator with iOS 26.5, generated-source compilation, and normal builds. Version-only changes receive a new build check; they do not imply the test suite ran again. Those results describe those runs, so please run the relevant checks for your own changes.
 
 Physical vibration, envelope feel, hardware interruptions, the minimum iOS 26.0 runtime, iPad layout, and sharing into other apps still need verification in the recorded checks. Screenshots show the interface, but don't verify those behaviors. Test physical playback before shipping code based on this sample.
 
@@ -264,7 +277,7 @@ Start with [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATI
 - Preserve unrelated work and local signing settings. Inspect the complete staged diff before committing. Physical-device installation and repository visibility changes need an explicit request.
 - Keep documentation aligned with the code. An available API or a successful simulator test doesn't establish physical feedback.
 
-The [capability study](Docs/HAPTICS_STUDY.md), updated on 11 October 2026, maps the current controls and Swift export to Apple APIs and distinguishes implemented features from other framework capabilities. Confirm later changes against the source.
+The [capability study](Docs/HAPTICS_STUDY.md), with implementation updates through 18 October 2026, maps the current controls and Swift export to Apple APIs and distinguishes implemented features from other framework capabilities. Confirm later changes against the source.
 
 ## Contributing
 
@@ -289,6 +302,9 @@ Found a security issue? Please use [private vulnerability reporting](https://git
 | Home says custom haptics are unavailable | Check whether you're using a simulator or a device without Core Haptics support |
 | Play is unavailable on supported hardware | Check the parameter ranges and use a positive Duration when Continuous is on |
 | Save won't close the numeric editor | Read the inline error and enter a finite number in range, without units or digit grouping |
+| Vary over time is unavailable | Turn on Continuous; both dynamic Intensity and Sharpness ranges must be reported by the device |
+| A point time is rejected | Keep it strictly between the adjacent points; Start and End times are fixed |
+| Curves are silent or unexpected | Check every point's intensity, the Envelope settings, and the inline validation message; confirm the feel on physical hardware |
 | An envelope control is unavailable or fixed | The device hasn't reported an editable range for that parameter and event type |
 | A custom pattern is silent | Check intensity, hardware support, foreground state, and system settings |
 | Playback stops when you leave Custom or background the app | This is expected; return to Custom and press Play again |

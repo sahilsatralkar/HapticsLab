@@ -1,6 +1,6 @@
 # Haptics capability study
 
-Updated 11 October 2026 against the current app sources using Xcode MCP. Apple documentation was first reviewed on 10 October; the continuous-event limit, envelope semantics, and Pencil canvas guidance were checked again during this update. This document separates framework capabilities from features implemented in Haptics lab. It does not establish physical feedback on a particular device.
+Implementation notes updated through 18 October 2026 using Xcode MCP. Apple documentation was first reviewed on 10 October; the continuous-event limit, envelope semantics, and Pencil canvas guidance were checked again on 11 October, and parameter-curve/dynamic-range documentation on 18 October. This document separates framework capabilities from features implemented in Haptics lab. It does not establish physical feedback on a particular device.
 
 The app targets iPhone and iPad with iOS/iPadOS 26.0 or later. Custom testing covers built-in vibration, with no audio. Home also offers native canvas feedback requests intended for Apple Pencil Pro with a compatible iPad.
 
@@ -59,7 +59,7 @@ Implementation: [HapticsController.swift](../HapticsLab/HapticsController.swift)
 
 ## Configurable curves — implementation update, 18 October 2026
 
-Custom now offers continuous-event intensity/sharpness curves. Dynamic ranges are queried separately using `attributes(forDynamicParameter:)`; no ranges are invented when unavailable. Native expandable point rows support exact numeric entry, insertion preserving the linear shape, and deletion of intermediate points. Start and End stay at 0 and Duration; stored positions scale times proportionally when Duration changes. Two to sixteen points is an app limit, with three flat points initially. Invalid ordering, nonfinite/out-of-range values, missing dynamic ranges, and unsupported combined Float values block playback/export. Constant and transient modes retain but ignore the curve; Reset clears it.
+The unreleased 1.2 development version now offers continuous-event intensity/sharpness curves; see [CHANGELOG.md](../CHANGELOG.md) for release status. Dynamic ranges are queried separately using `attributes(forDynamicParameter:)`; no ranges are invented when unavailable. Native expandable point rows support exact numeric entry, insertion preserving the linear shape, and deletion of intermediate points. Start and End stay at 0 and Duration; stored positions scale times proportionally when Duration changes. Two to sixteen points is an app limit, with three flat points initially. Invalid ordering, nonfinite/out-of-range values, missing dynamic ranges, and unsupported combined Float values block playback/export. Constant and transient modes retain but ignore the curve; Reset clears it.
 
 Playback and export share event construction and curve scheduling. Each repetition schedules its own pair of pattern-wide curves; zero-gap boundaries are included in unit coverage. The generated standalone player validates destination dynamic ranges and combined event/curve values. Envelope settings still apply, and tails may overlap subsequent activity. This implements scheduled modulation, not live controls, selectable motor frequency, or proof of engine-like tactile output.
 
@@ -99,10 +99,10 @@ Sources: [SensoryFeedback](https://developer.apple.com/documentation/swiftui/sen
 
 ## Verification and limits of this study
 
-The 11 October readiness review ran all **27 unit tests** through Xcode MCP on the iPhone 13 mini simulator with iOS 26.5, followed by a successful normal build. That is prior execution evidence, not a new run for this documentation update. UI tests are intentionally excluded. See [VERIFICATION.md](../VERIFICATION.md) for dated results and limitations.
+The 18 October curve-feature verification ran all **40 unit tests** through Xcode MCP on the iPhone 13 mini simulator with iOS 26.5, compiled a generated Swift source file alongside the app, reviewed constrained light/dark previews, and finished with a normal build. These are dated feature-verification results; a later version-only build does not imply another test run. UI tests are intentionally excluded. See [VERIFICATION.md](../VERIFICATION.md) for dated results and limitations.
 
 Unit coverage includes capabilities, validation, mode changes, event construction and timing, envelope branches, snapshots, repeated Stop, numeric entry, draft retention, and export/attachment behavior. It does not establish physical vibration, interactive share-sheet success, or independent compilation of generated Swift in another app.
 
-Physical feedback and calibration across devices, envelope feel and interruption behavior, Apple Pencil delivery, iPad layout, sharing into other apps, standalone export compilation, and execution on the minimum iOS/iPadOS 26.0 runtime remain unverified in the recorded checks. Screenshots and successful simulator construction cannot substitute for these observations. Framework-reported pattern duration can also differ from encoded event duration; tests check those separately rather than treating either as measured vibration time.
+Physical feedback and calibration across devices, envelope feel and interruption behavior, Apple Pencil delivery, iPad layout, sharing into other apps, integration of exported Swift in a separate consumer app, and execution on the minimum iOS/iPadOS 26.0 runtime remain unverified in the recorded checks. Screenshots and successful simulator construction cannot substitute for these observations. Framework-reported pattern duration can also differ from encoded event duration; tests check those separately rather than treating either as measured vibration time.
 
 This study describes the reviewed API families and current implementation. It does not claim exhaustive verification of future SDK symbols or hardware behavior. Confirm the current source and relevant Apple documentation before extending the app.

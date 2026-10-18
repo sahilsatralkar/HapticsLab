@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes focus on the latest release (currently **v1.1**) and ongoing development on `main`. Older releases do not receive separate security backports. Please include your tag or commit when reporting a problem.
+Security fixes focus on the [latest published release](https://github.com/sahilsatralkar/HapticsLab/releases/latest) and ongoing development on `main`. The [changelog](CHANGELOG.md) identifies unreleased development separately from published versions. Older releases do not receive separate security backports. Please include your tag or commit when reporting a problem.
 
 ## Report a vulnerability privately
 

@@ -1,5 +1,14 @@
 # Verification
 
+## Version 1.2 and community documentation — 18 October 2026
+
+Incremented the app to **1.2, build 3** through Xcode MCP and confirmed both build settings. Added CHANGELOG.md and updated README, CONTRIBUTING, SECURITY, agent guidance, and the capability study. The documentation distinguishes the unreleased curve controls on `main` from the latest published GitHub release, v1.1, confirmed through GitHub's release list. No tag or release was created.
+
+- Xcode MCP: final normal build succeeded on the selected iPhone 13 mini simulator / iOS 26.5, reporting the iOS 27.1 simulator SDK. The exact Xcode application version was not reported. Artifact: `BuildProject-Log-20261018-150324.txt`.
+- Unit tests were not rerun for version settings and documentation. The curve-feature entry below records the separate 40-test pass and generated-source compilation; those are prior checks, not new runs for this task.
+- No UI or playback behavior changed. No new physical-device, iPad, minimum-runtime, tactile, or sharing checks were performed. Existing local personal signing settings were preserved.
+- Documentation content, local links, anchors, image references, and Git whitespace checks passed.
+
 ## Configurable intensity and sharpness curves — 18 October 2026
 
 Added Continuous-only Vary over time with native DisclosureGroup point editors, smooth sliders, exact numeric entry, Add point, and intermediate-point deletion. Three flat points initially preserve the existing constant values; 2–16 points is an app limit. Start and End remain at 0 and Duration. Stable UUID identities preserve row state, insertion interpolates the existing shape, invalid ordering is rejected, and changing Duration scales point times proportionally. Hidden curves survive mode changes and navigation; Reset clears them. Help, README, agent guidance, and the dated study describe the new behavior. No named Engine Rev preset, audio, persistence, version bump, or release was added.

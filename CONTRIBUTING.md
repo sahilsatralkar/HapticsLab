@@ -9,7 +9,7 @@ For suspected security vulnerabilities, use [private vulnerability reporting](ht
 ## Contribution workflow
 
 1. Fork the repository and create a branch for your change. For substantial features or behavior changes, discuss the scope in an issue before implementation.
-2. Make a focused change and update relevant documentation. Preserve unrelated work and keep personal signing settings local.
+2. Make a focused change and update relevant documentation. For user-facing behavior, add a short entry under the next Unreleased version in [CHANGELOG.md](CHANGELOG.md). Preserve unrelated work and keep personal signing settings local.
 3. Perform the applicable local verification below and record the results in your pull request.
 4. Open a pull request targeting upstream `main`, explaining the problem and resulting behavior. Address review feedback and repeat affected checks when the code changes.
 5. The repository owner, `sahilsatralkar`, reviews and merges contributions. GitHub blocks other users from pushing or merging into upstream `main`; submit your changes through a PR.
@@ -45,6 +45,19 @@ Before merging an app change, the maintainer reviews the final revision, runs af
 The active [Owner-only main updates ruleset](https://github.com/sahilsatralkar/HapticsLab/rules/24876927) applies to `main`, with **sahilsatralkar** as its only bypass user. Only the owner can push, merge, delete, or recreate that branch. You can still submit a PR from your fork for the owner to review and merge.
 
 This branch protection works independently of GitHub Actions and doesn't require CI status checks. Do not add Actions workflows or require CI checks unless the maintainer explicitly requests a change to this manual workflow.
+
+## Versions and releases
+
+README describes the current `main` branch, which may contain features that are not in the latest published release. Use the [changelog](CHANGELOG.md) and [published releases](https://github.com/sahilsatralkar/HapticsLab/releases) to identify the version you tested. Include its tag or commit in issues and PRs.
+
+The maintainer handles versioning and publication:
+
+1. Set the app target's **Marketing Version** and **Current Project Version** for the intended release. Keep personal signing settings local.
+2. Review the Unreleased changelog entry, README, security support scope, and screenshot provenance. Keep unreleased features clearly identified until publication.
+3. Complete the relevant local verification on the final revision and record results and limitations in VERIFICATION.md, following the manual workflow above.
+4. When the release is ready and publication is authorized, replace Unreleased with the release date, commit the final documentation, and create an annotated `v<version>` tag at that verified commit on `main`. Push the tag and publish GitHub release notes covering the changes, setup, checks, and known limitations. Preserve existing published tags unless the owner explicitly requests moving one.
+
+GitHub Actions and prebuilt app binaries are not required for these source releases. Contributors should not bump the version or publish a release as part of an ordinary feature PR unless the maintainer requests it.
 
 ## Implementation and repository hygiene
 

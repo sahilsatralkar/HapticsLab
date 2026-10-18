@@ -57,6 +57,12 @@ The generated Swift 6 / iOS 26.0+ example checks the destination device's suppor
 
 Implementation: [HapticsController.swift](../HapticsLab/HapticsController.swift), [HapticSwiftExport.swift](../HapticsLab/HapticSwiftExport.swift), [HapticShareSheet.swift](../HapticsLab/HapticShareSheet.swift). Framework reference: [engine stopped reasons](https://developer.apple.com/documentation/corehaptics/chhapticengine/stoppedreason).
 
+## Configurable curves — implementation update, 18 October 2026
+
+Custom now offers continuous-event intensity/sharpness curves. Dynamic ranges are queried separately using `attributes(forDynamicParameter:)`; no ranges are invented when unavailable. Native expandable point rows support exact numeric entry, insertion preserving the linear shape, and deletion of intermediate points. Start and End stay at 0 and Duration; stored positions scale times proportionally when Duration changes. Two to sixteen points is an app limit, with three flat points initially. Invalid ordering, nonfinite/out-of-range values, missing dynamic ranges, and unsupported combined Float values block playback/export. Constant and transient modes retain but ignore the curve; Reset clears it.
+
+Playback and export share event construction and curve scheduling. Each repetition schedules its own pair of pattern-wide curves; zero-gap boundaries are included in unit coverage. The generated standalone player validates destination dynamic ranges and combined event/curve values. Envelope settings still apply, and tails may overlap subsequent activity. This implements scheduled modulation, not live controls, selectable motor frequency, or proof of engine-like tactile output.
+
 ## Other vibration capabilities
 
 These framework features provide context for contributors; their presence here is not a commitment to add them.
@@ -65,10 +71,10 @@ These framework features provide context for contributors; their presence here i
 | --- | --- | --- |
 | Transient and continuous events | `CHHapticEvent` building blocks | Both implemented; one selected type per sequence |
 | Mixed and overlapping timelines | Individually timed events with different types and parameters | No arbitrary timeline editor |
-| Dynamic intensity | `hapticIntensityControl` multiplies event intensity | No live or scheduled modulation |
-| Dynamic sharpness | `hapticSharpnessControl` adds an offset; AHAP documents continuous haptics | No live or scheduled modulation |
+| Dynamic intensity | `hapticIntensityControl` multiplies event intensity | Scheduled curves implemented on 18 October 2026; no live updates |
+| Dynamic sharpness | `hapticSharpnessControl` adds an offset; AHAP documents continuous haptics | Scheduled continuous-event curves implemented on 18 October 2026; no live updates |
 | Dynamic envelope adjustment | Attack, decay, and release controls | Fixed event envelopes only |
-| Smooth modulation curves | `CHHapticParameterCurve` interpolates between control points across a pattern | Not exposed |
+| Smooth modulation curves | `CHHapticParameterCurve` interpolates between control points across a pattern | Configurable 2–16 points, with a fresh curve pair scheduled for each repetition; included in Swift export |
 | Pause, resume, and seek | `CHHapticAdvancedPatternPlayer` | Advanced player is used for Play/Stop and completion only |
 | Looping | `loopEnabled` and `loopEnd` | Finite event repetition only, not player looping |
 | Playback rate | Advanced player's `playbackRate` | Not exposed |

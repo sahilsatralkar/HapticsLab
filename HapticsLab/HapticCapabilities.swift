@@ -49,8 +49,11 @@ nonisolated struct HapticParameterRange: Equatable, Sendable {
 nonisolated struct HapticEventCapabilities: Equatable, Sendable {
     let ranges: [HapticParameter: HapticParameterRange]
     let unavailable: [HapticParameter: String]
+    var dynamicRanges: [HapticCurveParameter: HapticParameterRange] = [:]
+    var supportsCurves: Bool { HapticCurveParameter.allCases.allSatisfy { dynamicRanges[$0] != nil } }
 
     func validate(_ configuration: CustomHapticConfiguration) throws {
+        try configuration.validateCurvePoints()
         for parameter in [HapticParameter.intensity, .sharpness] {
             guard ranges[parameter] != nil else {
                 throw CustomHapticConfiguration.ValidationError.unavailableParameter
@@ -63,6 +66,26 @@ nonisolated struct HapticEventCapabilities: Equatable, Sendable {
             }
             guard range.contains(configuration.value(for: parameter)) else {
                 throw CustomHapticConfiguration.ValidationError.outsideDeviceRange
+            }
+        }
+        if configuration.usesCurves {
+            guard supportsCurves else { throw CustomHapticConfiguration.ValidationError.unavailableCurves }
+            for point in configuration.curvePoints {
+                guard ranges[.intensity]?.contains(point.intensity) == true,
+                      ranges[.sharpness]?.contains(point.sharpness) == true else {
+                    throw CustomHapticConfiguration.ValidationError.outsideDeviceRange
+                }
+                for parameter in HapticCurveParameter.allCases {
+                    let value = parameter.value(at: point, configuration: configuration)
+                    let base = Float(parameter == .intensity ? configuration.curveBaseIntensity : configuration.curveBaseSharpness)
+                    let effective = parameter == .intensity ? base * Float(value) : base + Float(value)
+                    let eventRange = ranges[parameter == .intensity ? .intensity : .sharpness]
+                    guard effective.isFinite,
+                          eventRange?.contains(Double(effective)) == true,
+                          dynamicRanges[parameter]?.contains(Double(Float(value))) == true else {
+                        throw CustomHapticConfiguration.ValidationError.outsideDeviceRange
+                    }
+                }
             }
         }
     }
@@ -79,6 +102,15 @@ nonisolated struct HapticCapabilities: Equatable, Sendable {
     @MainActor static func detect() -> Self {
         let hardware = CHHapticEngine.capabilitiesForHardware()
         var events: [CustomHapticConfiguration.EventKind: HapticEventCapabilities] = [:]
+        var dynamicRanges: [HapticCurveParameter: HapticParameterRange] = [:]
+        for parameter in HapticCurveParameter.allCases {
+            if let attributes = try? hardware.attributes(forDynamicParameter: parameter.parameterID),
+               let range = try? HapticParameterRange(minimum: Double(attributes.minValue),
+                                                     maximum: Double(attributes.maxValue),
+                                                     defaultValue: Double(attributes.defaultValue)) {
+                dynamicRanges[parameter] = range
+            }
+        }
         for kind in CustomHapticConfiguration.EventKind.allCases {
             var ranges: [HapticParameter: HapticParameterRange] = [:]
             var unavailable: [HapticParameter: String] = [:]
@@ -95,7 +127,7 @@ nonisolated struct HapticCapabilities: Equatable, Sendable {
                     unavailable[parameter] = error.localizedDescription
                 }
             }
-            events[kind] = HapticEventCapabilities(ranges: ranges, unavailable: unavailable)
+            events[kind] = HapticEventCapabilities(ranges: ranges, unavailable: unavailable, dynamicRanges: dynamicRanges)
         }
         return Self(supportsHaptics: hardware.supportsHaptics, events: events)
     }
@@ -125,5 +157,24 @@ nonisolated struct HapticDeviceInfo: Equatable, Sendable {
         return Self(model: device.model, systemVersion: device.systemVersion,
                     hardwareIdentifier: identifier, isSimulator: false)
         #endif
+    }
+}
+
+nonisolated enum HapticCurveParameter: String, CaseIterable, Sendable {
+    case intensity, sharpness
+    var parameterID: CHHapticDynamicParameter.ID {
+        switch self {
+        case .intensity: .hapticIntensityControl
+        case .sharpness: .hapticSharpnessControl
+        }
+    }
+
+    func value(at point: HapticCurvePoint, configuration: CustomHapticConfiguration) -> Double {
+        switch self {
+        case .intensity:
+            configuration.curveBaseIntensity == 0 ? 1 : point.intensity / configuration.curveBaseIntensity
+        case .sharpness:
+            point.sharpness - configuration.curveBaseSharpness
+        }
     }
 }

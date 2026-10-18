@@ -17,7 +17,7 @@ It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, 
   </tr>
 </table>
 
-These latest screenshots were supplied by the maintainer and show light appearance. Home shows all thirteen System haptics buttons with the updated typography, the Custom navigation row, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
+These screenshots were supplied by the maintainer and show light appearance. The Custom capture predates the configurable curve controls described below. Home shows all thirteen System haptics buttons with the updated typography, the Custom navigation row, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
 
 ## Contents
 
@@ -42,6 +42,7 @@ These latest screenshots were supplied by the maintainer and show light appearan
 | Check your device | See its hardware identifier, OS version, and whether custom haptics are supported |
 | Try taps or longer vibrations | Leave **Continuous** off for brief taps, or turn it on to set a Duration |
 | Adjust the feel | Move the Intensity and Sharpness sliders smoothly within the device's reported ranges |
+| Change the feel over time | Enable continuous playback and edit 2–16 timed intensity/sharpness points, with native expandable rows |
 | Enter an exact value | Tap a slider's number to type a value, with range guidance and validation |
 | Repeat a pattern | Choose one to eight repetitions and set the Gap between them |
 | Shape the envelope | Explore Sustained, Attack time, and Release time or Decay time where supported |
@@ -102,6 +103,20 @@ Choose **Custom haptics testing** to open **Custom**. The Home footer also shows
 Start with **Intensity** to adjust strength and **Sharpness** to move from a softer feel to a crisper one. Leave **Continuous** off for brief taps. Turn it on to reveal **Duration** and choose how long each vibration lasts, up to **30 seconds**.
 
 Continuous events need a duration greater than zero. To return to taps, turn Continuous off; your chosen duration is remembered for next time. When you switch modes, values that fit the new event type's ranges are kept. Values outside those ranges return to the device's reported defaults for that event type.
+
+### Vary over time
+
+With Continuous on, enable **Vary over time** to replace the constant Intensity and Sharpness controls with a list of curve points. The device must report both dynamic-parameter ranges. The curve starts with three points using your existing constant values, so enabling it initially preserves a flat shape.
+
+- Expand **Start**, **End**, or an intermediate **Point** to edit its Intensity and Sharpness with smooth sliders or exact numeric entry.
+- Start stays at 0 seconds and End follows Duration. Intermediate times must remain strictly between their neighbours. Invalid typed times are rejected without changing the draft.
+- **Add point** inserts a point halfway through the largest available time interval, with interpolated values that preserve the existing shape. **Delete point** removes an intermediate point and connects its neighbours directly.
+- Use **2–16 points**. This is an app limit, not a device-reported maximum. Start and End cannot be deleted.
+- Changing Duration scales all point times proportionally. Disabling variation or Continuous retains the curve for later; Reset to defaults clears it.
+
+Core Haptics interpolates linearly between points. Point values describe the requested event intensity and sharpness before the Envelope's effect. Internally, intensity curves multiply a base event intensity and sharpness curves add an offset. The app validates both event ranges and device-reported dynamic ranges, including the combined Float values; unsupported combinations block Play and Share and show an inline error.
+
+Each repetition restarts the complete curve. The existing Envelope still affects the result; for initial curve experiments, try Sustained on and minimum Attack/Release values. Sharpness changes tactile character, not engine RPM or a directly selectable vibration frequency. Test the feel on supported physical hardware.
 
 ### Repetition
 
@@ -164,7 +179,7 @@ ExportedHapticView()
 
 The file contains `ExportedHapticView` and `ExportedHapticPlayer`, using SwiftUI, Core Haptics, and Observation. It's standalone UTF-8 Swift source for Swift 6 and iOS 26.0 or later, so you don't need to add HapticsLab to your app. If you import several exports, rename the generated types to avoid name conflicts.
 
-Each export captures your **current draft**, including repetition, gap, and the parameters available on the exporting device. It uses the same validation, timing, and `Float` conversion as playback. Later edits won't change an already shared file.
+Each export captures your **current draft**, including repetition, gap, the parameters available on the exporting device, and any active intensity/sharpness curves. It uses the same validation, timing, and `Float` conversion as playback. Later edits won't change an already shared file.
 
 The header also records the exporting device type and hardware identifier, its iOS/iPadOS version, and whether it is a simulator or physical device. For example:
 
@@ -176,7 +191,7 @@ The header also records the exporting device type and hardware identifier, its i
 
 These comments capture where the file was exported, so testers can compare results across devices. They don't describe the device that later runs the file or determine haptic support.
 
-The generated player checks the destination device's support and parameter ranges, provides Play/Stop, handles errors and interruptions, and stops when its view disappears or the app becomes inactive. Try the result on your destination device: the same values may feel different on different hardware.
+The generated player checks the destination device's support, event and dynamic parameter ranges, and combined curve values, provides Play/Stop, handles errors and interruptions, and stops when its view disappears or the app becomes inactive. Try the result on your destination device: the same values may feel different on different hardware.
 
 Share is disabled while the configuration is invalid. If file preparation or sharing fails, the app shows an error. Each share uses its own temporary file, which stays available through sharing and is cleaned up when the sheet is dismissed.
 
@@ -190,7 +205,7 @@ A few details are useful when testing:
 - Optional envelope parameters that aren't available are shown as unavailable and left out of generated events.
 - Invalid capability data and invalid or nonfinite input are rejected. Values aren't silently clamped.
 - Continuous events are limited to **30 seconds each**. The app doesn't query a device-specific duration limit.
-- **1–8 repetitions** and a **0–2-second gap** are app limits. Together, they allow up to **254 seconds of scheduled continuous events**. There is no ten-second total-pattern cap.
+- **2–16 curve points**, **1–8 repetitions**, and a **0–2-second gap** are app limits. Together, they allow up to **254 seconds of scheduled continuous events**. There is no ten-second total-pattern cap.
 
 A support check can't tell you what a pattern will feel like. The result also depends on the hardware, app state, and system behavior. An intensity of zero is valid and can be intentionally silent.
 
@@ -217,15 +232,16 @@ If you'd like to change the app or reuse part of it, start here. It uses native 
 
 Startup can be cancelled. Generation tokens and engine identities prevent old asynchronous callbacks from affecting newer playback. Leaving Custom, making the app inactive, or interrupting the engine stops playback without an automatic restart. The engine plays haptics only and uses automatic shutdown.
 
-When adding a parameter, keep validation, capability mappings, controls, export, and related tests in sync. If you just want to reuse a pattern, the exported Swift file is the quickest starting point.
+When adding a parameter, keep validation, capability mappings, controls, export, and related tests in sync. Curve values use separate dynamic-parameter ranges and keep stable point identities across edits. If you just want to reuse a pattern, the exported Swift file is the quickest starting point.
 
 ## Tests and verification
 
-The **HapticsLabTests** target has **29 unit tests**:
+The **HapticsLabTests** target has **40 unit tests**:
 
 | File | What it covers |
 | --- | --- |
 | [HapticsLabTests.swift](HapticsLabTests/HapticsLabTests.swift) | Timing, mode switches, full event duration, smooth values, device ranges, unavailable parameters, envelope encoding, snapshots, distinct native requests, and repeatable Stop |
+| [HapticCurveTests.swift](HapticsLabTests/HapticCurveTests.swift) | Point insertion/deletion, timing validation, capability failures, curve encoding, repetition, silent patterns, retained drafts, and export parity |
 | [HapticNumberInputTests.swift](HapticsLabTests/HapticNumberInputTests.swift) | Numeric validation, boundaries, locale input, precision, retained drafts, and Reset |
 | [HapticSwiftExportTests.swift](HapticsLabTests/HapticSwiftExportTests.swift) | Exported parameters/timing, device metadata and runtime detection, unavailable parameters, invalid drafts, attachment snapshots, independent files, cleanup, and preparation failures |
 
@@ -284,7 +300,7 @@ Found a security issue? Please use [private vulnerability reporting](https://git
 
 The app covers built-in iPhone vibration testing and native Alignment/Path complete requests for Apple Pencil Pro on compatible iPads. Both canvas buttons appear on iPhone and iPad with a hardware footnote; physical Pencil feedback still needs verification.
 
-It doesn't currently include audio, custom accessory/controller patterns, mixed-event timelines, dynamic parameter curves, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, or saved preset libraries. You can use finite repetition and Swift source export as described above.
+It doesn't currently include audio, custom accessory/controller patterns, mixed-event timelines, live parameter updates while playing, pause/resume/seek, indefinite looping, playback-rate controls, AHAP import/export, or saved preset libraries. You can use finite repetition and Swift source export as described above.
 
 For the underlying APIs, see Apple's documentation:
 

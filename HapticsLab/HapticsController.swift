@@ -149,8 +149,28 @@ final class HapticsController {
         }
     }
 
+    static func parameterCurves(_ configuration: CustomHapticConfiguration,
+                                capabilities: HapticEventCapabilities) throws -> [CHHapticParameterCurve] {
+        try capabilities.validate(configuration)
+        let events = try configuration.events()
+        guard configuration.usesCurves else { return [] }
+        // Curves affect the whole player. Schedule a fresh pair at every event start,
+        // including zero-gap boundaries, so each repetition has the same shape.
+        return events.flatMap { event in
+            HapticCurveParameter.allCases.map { parameter in
+                CHHapticParameterCurve(parameterID: parameter.parameterID,
+                    controlPoints: configuration.curvePoints.map { point in
+                        CHHapticParameterCurve.ControlPoint(
+                            relativeTime: point.position * configuration.duration,
+                            value: Float(parameter.value(at: point, configuration: configuration)))
+                    }, relativeTime: event.time)
+            }
+        }
+    }
+
     static func pattern(_ configuration: CustomHapticConfiguration,
                         capabilities: HapticEventCapabilities) throws -> CHHapticPattern {
-        try CHHapticPattern(events: hapticEvents(configuration, capabilities: capabilities), parameters: [])
+        try CHHapticPattern(events: hapticEvents(configuration, capabilities: capabilities),
+                            parameterCurves: parameterCurves(configuration, capabilities: capabilities))
     }
 }

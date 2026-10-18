@@ -67,6 +67,7 @@ struct HapticValueEditor: View {
     let requiresPositive: Bool
     let seconds: Bool
     let locale: Locale
+    let additionalValidation: ((Double) -> String?)?
 
     @State private var text: String
     @State private var hasEdited = false
@@ -74,21 +75,23 @@ struct HapticValueEditor: View {
     @Environment(\.dismiss) private var dismiss
 
     init(title: LocalizedStringResource, value: Binding<Double>, range: ClosedRange<Double>,
-         requiresPositive: Bool, seconds: Bool, locale: Locale) {
+         requiresPositive: Bool, seconds: Bool, locale: Locale,
+         additionalValidation: ((Double) -> String?)? = nil) {
         self.title = title
         _value = value
         self.range = range
         self.requiresPositive = requiresPositive
         self.seconds = seconds
         self.locale = locale
+        self.additionalValidation = additionalValidation
         _text = State(initialValue: HapticNumberInput.text(for: value.wrappedValue, locale: locale))
     }
 
     private var validationMessage: String? {
         do {
-            _ = try HapticNumberInput.parse(text, range: range,
+            let parsed = try HapticNumberInput.parse(text, range: range,
                                            requiresPositive: requiresPositive, locale: locale)
-            return nil
+            return additionalValidation?(parsed)
         } catch { return error.localizedDescription }
     }
 
@@ -143,6 +146,7 @@ struct HapticValueEditor: View {
         do {
             let parsed = try HapticNumberInput.parse(text, range: range,
                                                     requiresPositive: requiresPositive, locale: locale)
+            guard additionalValidation?(parsed) == nil else { hasEdited = true; return }
             value = parsed
             dismiss()
         } catch {

@@ -41,6 +41,15 @@ nonisolated struct CustomHapticConfiguration: Equatable, Sendable {
         variesOverTime = enabled
     }
 
+    // A capability-aware projection for the native picker; both drafts stay intact.
+    subscript(variationSupported supported: Bool) -> Bool {
+        get { variesOverTime }
+        set {
+            guard !newValue || supported else { return }
+            setVariation(newValue)
+        }
+    }
+
     var curveBaseIntensity: Double { curvePoints.map(\.intensity).max() ?? intensity }
     var curveBaseSharpness: Double { curvePoints.first?.sharpness ?? sharpness }
 

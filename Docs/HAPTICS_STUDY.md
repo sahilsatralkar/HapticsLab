@@ -1,6 +1,6 @@
 # Haptics capability study
 
-Implementation notes updated through 18 October 2026 using Xcode MCP. Apple documentation was first reviewed on 10 October; the continuous-event limit, envelope semantics, and Pencil canvas guidance were checked again on 11 October, and parameter-curve/dynamic-range documentation on 18 October. This document separates framework capabilities from features implemented in Haptics lab. It does not establish physical feedback on a particular device.
+Implementation notes updated through 20 October 2026 using Xcode MCP. Apple documentation was first reviewed on 10 October; the continuous-event limit, envelope semantics, and Pencil canvas guidance were checked again on 11 October, and parameter-curve/dynamic-range documentation on 18 October. The 20 October update describes the mode-selection UI, not a new framework capability study. This document separates framework capabilities from features implemented in Haptics lab. It does not establish physical feedback on a particular device.
 
 The app targets iPhone and iPad with iOS/iPadOS 26.0 or later. Custom testing covers built-in vibration, with no audio. Home also offers native canvas feedback requests intended for Apple Pencil Pro with a compatible iPad.
 
@@ -25,7 +25,7 @@ Sources: [continuous event](https://developer.apple.com/documentation/corehaptic
 
 ## Controls and fixed event parameters
 
-Custom groups controls into Haptics, Repetition, and Envelope, each with an information button. Continuous reveals Duration; more than one repetition reveals Gap. Repetitions and Gap are app-defined sequence controls, not Core Haptics parameter IDs.
+Custom groups controls into Haptics, Repetition, and Envelope, each with an information button. Continuous reveals Duration and the Intensity and sharpness mode selector; more than one repetition reveals Gap. Repetitions and Gap are app-defined sequence controls, not Core Haptics parameter IDs.
 
 | UI label | Apple API | Meaning and availability |
 | --- | --- | --- |
@@ -63,6 +63,10 @@ Version 1.2 adds continuous-event intensity/sharpness curves; see [CHANGELOG.md]
 
 Playback and export share event construction and curve scheduling. Each repetition schedules its own pair of pattern-wide curves; zero-gap boundaries are included in unit coverage. The generated standalone player validates destination dynamic ranges and combined event/curve values. Envelope settings still apply, and tails may overlap subsequent activity. This implements scheduled modulation, not live controls, selectable motor frequency, or proof of engine-like tactile output.
 
+## Constant and varying modes — UI update, 20 October 2026
+
+Version 1.3 replaces the variation toggle with a native **Intensity and sharpness** segmented control: **Constant** or **Vary over time**. It appears only for continuous events. Constant shows one Intensity/Sharpness pair; Vary over time shows the timed point editors instead. Switching these modes retains both sets of values independently, and only the selected mode contributes to playback and export. The first curve is initialized from the constant values; later switches restore the edited curve. Turning Continuous off uses constant values and retains the hidden curve. This UI change does not alter the curve ranges, point limits, envelope semantics, or scheduling introduced in 1.2. See [VERIFICATION.md](../VERIFICATION.md) for current checks rather than treating the 18 October evidence as a test of this UI update.
+
 ## Other vibration capabilities
 
 These framework features provide context for contributors; their presence here is not a commitment to add them.
@@ -99,7 +103,7 @@ Sources: [SensoryFeedback](https://developer.apple.com/documentation/swiftui/sen
 
 ## Verification and limits of this study
 
-The 18 October curve-feature verification ran all **40 unit tests** through Xcode MCP on the iPhone 13 mini simulator with iOS 26.5, compiled a generated Swift source file alongside the app, reviewed constrained light/dark previews, and finished with a normal build. These are dated feature-verification results; a later version-only build does not imply another test run. UI tests are intentionally excluded. See [VERIFICATION.md](../VERIFICATION.md) for dated results and limitations.
+The 20 October mode-picker verification ran all **43 unit tests** through Xcode MCP on iPhone 13 mini / iOS 26.5, manually checked the picker and retained values on iPhone 17 Pro / iOS 27.0, reviewed constrained light/dark form previews on iPhone Duo / iOS 27.1, and finished with a normal build on iPhone 13 mini. Earlier curve-feature verification on 18 October also compiled a generated Swift source file alongside the app. These are dated results, not checks already performed for later changes. UI tests are intentionally excluded. See [VERIFICATION.md](../VERIFICATION.md) for the distinction between manual, preview, and unit evidence and the remaining limitations.
 
 Unit coverage includes capabilities, validation, mode changes, event construction and timing, envelope branches, snapshots, repeated Stop, numeric entry, draft retention, and export/attachment behavior. It does not establish physical vibration, interactive share-sheet success, or independent compilation of generated Swift in another app.
 

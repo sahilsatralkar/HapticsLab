@@ -1,6 +1,20 @@
 # Changelog
 
-This file records user-facing changes by app version. **Unreleased** entries describe development on `main`; published versions link to their GitHub releases. Build numbers identify app builds within that history.
+This file records user-facing changes by app version. **Unreleased** entries describe development on `main`; tagged versions link to their source or published GitHub release. Build numbers identify app builds within that history.
+
+## [1.3](https://github.com/sahilsatralkar/HapticsLab/tree/v1.3) — 2026-10-20
+
+App version **1.3**, build **4**.
+
+Available as a source tag; no separate GitHub release has been published for this version.
+
+### Changed
+
+- Continuous haptics use a native **Constant | Vary over time** segmented control instead of a variation toggle, making clear that these are alternative ways to set Intensity and Sharpness.
+- Switching modes retains constant values and the separately edited curve points. Only the selected mode's values affect playback and Swift export; turning Continuous off uses the constant controls while retaining the curve for later.
+- Added three regression tests for independent value retention, selected-mode playback/export, Continuous round trips, and rejection of unsupported variation. The suite now has 43 tests.
+
+[Changes since v1.2](https://github.com/sahilsatralkar/HapticsLab/compare/v1.2...v1.3).
 
 ## [1.2](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2) — 2026-10-18
 

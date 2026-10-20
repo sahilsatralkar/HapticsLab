@@ -4,7 +4,7 @@ Explore Apple's system haptics, build your own vibration patterns, and take the 
 
 It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, **SwiftUI**, and **Core Haptics**, and has **no third-party dependencies**. You can explore the interface in a simulator, but you'll need compatible physical hardware to feel the feedback.
 
-The latest release is [**v1.2 (build 3)**](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2), with configurable intensity/sharpness curves and matching Swift exports. Choose the `v1.2` tag to use this release, or build `main` for ongoing development. See the [changelog](CHANGELOG.md) for changes by version.
+The current source version is [**v1.3 (build 4)**](https://github.com/sahilsatralkar/HapticsLab/tree/v1.3), with a clearer choice between constant intensity/sharpness and values that vary over time. Choose the `v1.3` tag for this version, or build `main` for ongoing development. The latest published GitHub release is [v1.2](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2). See the [changelog](CHANGELOG.md) for changes by version.
 
 ## Screenshots
 
@@ -44,8 +44,8 @@ These screenshots were supplied by the maintainer and show light appearance. The
 | Compare system haptics | Try thirteen native feedback choices, including two canvas effects marked with an Apple Pencil Pro requirement |
 | Check your device | See its hardware identifier, OS version, and whether custom haptics are supported |
 | Try taps or longer vibrations | Leave **Continuous** off for brief taps, or turn it on to set a Duration |
-| Adjust the feel | Move the Intensity and Sharpness sliders smoothly within the device's reported ranges |
-| Change the feel over time | Enable continuous playback and edit 2–16 timed intensity/sharpness points, with native expandable rows |
+| Adjust the feel | Use **Constant** for one Intensity and Sharpness pair, with smooth sliders within the device's reported ranges |
+| Change the feel over time | With Continuous on, choose **Vary over time** and edit 2–16 timed intensity/sharpness points; switching modes retains both sets of values |
 | Enter an exact value | Tap a slider's number to type a value, with range guidance and validation |
 | Repeat a pattern | Choose one to eight repetitions and set the Gap between them |
 | Shape the envelope | Explore Sustained, Attack time, and Release time or Decay time where supported |
@@ -103,19 +103,24 @@ Choose **Custom haptics testing** to open **Custom**. The Home footer also shows
 
 ### Haptics
 
-Start with **Intensity** to adjust strength and **Sharpness** to move from a softer feel to a crisper one. Leave **Continuous** off for brief taps. Turn it on to reveal **Duration** and choose how long each vibration lasts, up to **30 seconds**.
+Start with **Intensity** to adjust strength and **Sharpness** to move from a softer feel to a crisper one. Leave **Continuous** off for brief taps. Turn it on to reveal **Duration** and choose how long each vibration lasts, up to **30 seconds**. A native **Intensity and sharpness** segmented control then offers two ways to set the feel:
 
-Continuous events need a duration greater than zero. To return to taps, turn Continuous off; your chosen duration is remembered for next time. When you switch modes, values that fit the new event type's ranges are kept. Values outside those ranges return to the device's reported defaults for that event type.
+- **Constant:** one Intensity and Sharpness pair applies throughout the vibration.
+- **Vary over time:** timed points change those same properties during the vibration.
+
+Only the selected mode's controls appear and affect playback or export. Switching between these modes keeps your constant values and curve points separately, so you can compare them without re-entering values. With Continuous off, only the constant controls apply.
+
+Continuous events need a duration greater than zero. To return to taps, turn Continuous off; your chosen duration is remembered for next time. Switching between transient and continuous events keeps values that fit the new event type's ranges. Values outside those ranges return to the device's reported defaults for that event type.
 
 ### Vary over time
 
-With Continuous on, enable **Vary over time** to replace the constant Intensity and Sharpness controls with a list of curve points. The device must report both dynamic-parameter ranges. The curve starts with three points using your existing constant values, so enabling it initially preserves a flat shape.
+With Continuous on, select **Vary over time** to replace the constant Intensity and Sharpness sliders with a list of curve points. The device must report both dynamic-parameter ranges. The first selection creates three points using your existing constant values, so the initial shape is flat. Later selections restore the curve you last edited rather than recreating it from the constant values.
 
 - Expand **Start**, **End**, or an intermediate **Point** to edit its Intensity and Sharpness with smooth sliders or exact numeric entry.
 - Start stays at 0 seconds and End follows Duration. Intermediate times must remain strictly between their neighbours. Invalid typed times are rejected without changing the draft.
 - **Add point** inserts a point halfway through the largest available time interval, with interpolated values that preserve the existing shape. **Delete point** removes an intermediate point and connects its neighbours directly.
 - Use **2–16 points**. This is an app limit, not a device-reported maximum. Start and End cannot be deleted.
-- Changing Duration scales all point times proportionally. Disabling variation or Continuous retains the curve for later; Reset to defaults clears it.
+- Changing Duration scales all point times proportionally. Choosing Constant or turning Continuous off retains the curve for later; Reset to defaults clears it.
 
 Core Haptics interpolates linearly between points. Point values describe the requested event intensity and sharpness before the Envelope's effect. Internally, intensity curves multiply a base event intensity and sharpness curves add an offset. The app validates both event ranges and device-reported dynamic ranges, including the combined Float values; unsupported combinations block Play and Share and show an inline error.
 
@@ -262,7 +267,7 @@ Run affected unit tests in Xcode, or choose **Product → Test** for the full su
 
 For documentation-only changes, check the content, links, images, and diff; there's no need to build or run app tests.
 
-[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including the 40-test curve-feature pass on the iPhone 13 mini simulator with iOS 26.5, generated-source compilation, and normal builds. Version-only changes receive a new build check; they do not imply the test suite ran again. Those results describe those runs, so please run the relevant checks for your own changes.
+[VERIFICATION.md](VERIFICATION.md) records what was tested and when, including the 43-test segmented-control pass on the iPhone 13 mini simulator with iOS 26.5. Earlier curve-feature checks also compiled generated source alongside the app. Version-only changes receive a new build check; they do not imply the test suite ran again. Those results describe those runs, so please run the relevant checks for your own changes.
 
 Physical vibration, envelope feel, hardware interruptions, the minimum iOS 26.0 runtime, iPad layout, and sharing into other apps still need verification in the recorded checks. Screenshots show the interface, but don't verify those behaviors. Test physical playback before shipping code based on this sample.
 
@@ -277,7 +282,7 @@ Start with [AGENTS.md](AGENTS.md), this README, and [VERIFICATION.md](VERIFICATI
 - Preserve unrelated work and local signing settings. Inspect the complete staged diff before committing. Physical-device installation and repository visibility changes need an explicit request.
 - Keep documentation aligned with the code. An available API or a successful simulator test doesn't establish physical feedback.
 
-The [capability study](Docs/HAPTICS_STUDY.md), with implementation updates through 18 October 2026, maps the current controls and Swift export to Apple APIs and distinguishes implemented features from other framework capabilities. Confirm later changes against the source.
+The [capability study](Docs/HAPTICS_STUDY.md), with implementation updates through 20 October 2026, maps the current controls and Swift export to Apple APIs and distinguishes implemented features from other framework capabilities. Confirm later changes against the source.
 
 ## Contributing
 
@@ -302,7 +307,7 @@ Found a security issue? Please use [private vulnerability reporting](https://git
 | Home says custom haptics are unavailable | Check whether you're using a simulator or a device without Core Haptics support |
 | Play is unavailable on supported hardware | Check the parameter ranges and use a positive Duration when Continuous is on |
 | Save won't close the numeric editor | Read the inline error and enter a finite number in range, without units or digit grouping |
-| Vary over time is unavailable | Turn on Continuous; both dynamic Intensity and Sharpness ranges must be reported by the device |
+| Vary over time is unavailable | Turn on Continuous to show the segmented control; both dynamic Intensity and Sharpness ranges must be reported by the device |
 | A point time is rejected | Keep it strictly between the adjacent points; Start and End times are fixed |
 | Curves are silent or unexpected | Check every point's intensity, the Envelope settings, and the inline validation message; confirm the feel on physical hardware |
 | An envelope control is unavailable or fixed | The device hasn't reported an editable range for that parameter and event type |

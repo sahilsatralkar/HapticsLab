@@ -22,7 +22,7 @@ struct CustomHapticsView: View {
     var body: some View {
         Form {
             Section {
-                if !configuration.usesCurves {
+                if !configuration.isContinuous {
                     HapticParameterControl(parameter: .intensity, configuration: $configuration, limits: limits)
                     HapticParameterControl(parameter: .sharpness, configuration: $configuration, limits: limits)
                 }
@@ -35,19 +35,26 @@ struct CustomHapticsView: View {
                     HapticValueSlider(title: "Duration", value: $configuration.duration,
                                       range: 0...CustomHapticConfiguration.maximumContinuousDuration,
                                       identifier: "custom.duration", seconds: true, requiresPositive: true)
-                    Toggle("Vary over time", isOn: Binding(
-                        get: { configuration.variesOverTime },
-                        set: { configuration.setVariation($0) }
-                    ))
-                    .disabled(!limits.supportsCurves && !configuration.variesOverTime)
+                    Picker("Intensity and sharpness",
+                           selection: $configuration[variationSupported: limits.supportsCurves]) {
+                        Text("Constant").tag(false)
+                        Text("Vary over time").tag(true)
+                            .disabled(!limits.supportsCurves)
+                    }
+                    .pickerStyle(.segmented)
                     .accessibilityIdentifier("custom.curves.enabled")
                     if !limits.supportsCurves {
                         Text("Dynamic intensity and sharpness controls are unavailable on this device.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
-                    if configuration.usesCurves && configuration.duration > 0 {
-                        HapticCurveControls(configuration: $configuration, limits: limits)
+                    if configuration.usesCurves {
+                        if configuration.duration > 0 {
+                            HapticCurveControls(configuration: $configuration, limits: limits)
+                        }
+                    } else {
+                        HapticParameterControl(parameter: .intensity, configuration: $configuration, limits: limits)
+                        HapticParameterControl(parameter: .sharpness, configuration: $configuration, limits: limits)
                     }
                     if configuration.duration == 0 {
                         Text("Duration must be greater than 0.")
@@ -190,7 +197,7 @@ private enum HapticHelpTopic: String, Identifiable {
     var explanation: LocalizedStringResource {
         switch self {
         case .haptics:
-            "Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps. Vary over time lets you edit intensity and sharpness at 2 to 16 points. Expand a point to edit it. Start and End follow Duration; intermediate times must remain in order. Changing Duration scales every point time. Add point preserves the current curve; deleting a point connects its neighbours directly. The same shape repeats for each repetition. Envelope settings still affect the result."
+            "Intensity controls the strength. Sharpness changes the feel from soft and rounded to crisp. Turn on Continuous to set how long each vibration lasts; leave it off for brief taps. Choose Constant to keep one intensity and sharpness pair throughout each vibration, or Vary over time to change them at 2 to 16 points. Switching between these choices keeps both sets of values. Expand a point to edit it. Start and End follow Duration; intermediate times must remain in order. Changing Duration scales every point time. Add point preserves the current curve; deleting a point connects its neighbours directly. The same shape repeats for each repetition. Envelope settings still affect the result."
         case .repetition:
             "Choose how many times the haptic plays. For a single vibration, leave Repetitions at 1. Increase it to test a repeating pattern, then adjust Gap to change the spacing between vibrations."
         case .envelope:

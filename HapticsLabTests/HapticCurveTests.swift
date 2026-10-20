@@ -184,6 +184,94 @@ final class HapticCurveTests: XCTestCase {
         XCTAssertEqual(try HapticsController.parameterCurves(value, capabilities: limits()).count, 2)
     }
 
+    func testPickerSwitchesRetainIndependentValuesAndExportTheSelectedMode() throws {
+        let deviceLimits = try limits()
+        var value = CustomHapticConfiguration.defaults
+        value.isContinuous = true
+        value.duration = 1.2
+        value.intensity = 0.23
+        value.sharpness = 0.37
+        value[variationSupported: deviceLimits.supportsCurves] = true
+        XCTAssertEqual(value.curvePoints.count, 3)
+        XCTAssertTrue(value.curvePoints.allSatisfy { $0.intensity == 0.23 && $0.sharpness == 0.37 })
+        value.curvePoints[1].position = 0.25
+        value.curvePoints[1].intensity = 0.91
+        value.curvePoints[1].sharpness = 0.82
+        value.addCurvePoint()
+        let points = value.curvePoints
+
+        value[variationSupported: true] = false
+        XCTAssertEqual(value.intensity, 0.23)
+        XCTAssertEqual(value.sharpness, 0.37)
+        value.intensity = 0.42
+        value.sharpness = 0.66
+        for _ in 0..<3 {
+            XCTAssertEqual(value.curvePoints, points)
+            XCTAssertEqual(value.value(for: .intensity), 0.42)
+            XCTAssertEqual(value.value(for: .sharpness), 0.66)
+            let constantEvent = try XCTUnwrap(HapticsController.hapticEvents(value, capabilities: deviceLimits).first)
+            XCTAssertEqual(constantEvent.eventParameters.first { $0.parameterID == .hapticIntensity }?.value, Float(0.42))
+            XCTAssertEqual(constantEvent.eventParameters.first { $0.parameterID == .hapticSharpness }?.value, Float(0.66))
+            XCTAssertTrue(try HapticsController.parameterCurves(value, capabilities: limits(dynamic: false)).isEmpty)
+            let constantSource = try HapticSwiftExport.source(for: value, capabilities: deviceLimits)
+            XCTAssertFalse(constantSource.contains("CHHapticParameterCurve(parameterID:"))
+
+            value[variationSupported: true] = true
+            XCTAssertEqual(value.curvePoints, points)
+            XCTAssertEqual(value.intensity, 0.42)
+            XCTAssertEqual(value.sharpness, 0.66)
+            XCTAssertEqual(value.value(for: .intensity), 0.91)
+            XCTAssertEqual(value.value(for: .sharpness), 0.37)
+            XCTAssertEqual(try HapticsController.parameterCurves(value, capabilities: deviceLimits).count, 2)
+            let variableSource = try HapticSwiftExport.source(for: value, capabilities: deviceLimits)
+            XCTAssertEqual(variableSource.components(separatedBy: "CHHapticParameterCurve(parameterID:").count - 1, 2)
+            value[variationSupported: true] = false
+        }
+    }
+
+    func testContinuousRoundTripRetainsPickerSelectionAndBothDrafts() throws {
+        let deviceLimits = try limits()
+        let capabilities = HapticCapabilities(supportsHaptics: true,
+                                             events: [.transient: deviceLimits, .continuous: deviceLimits])
+        var value = draft()
+        value.intensity = 0.24
+        value.sharpness = 0.73
+        value.addCurvePoint()
+        let points = value.curvePoints
+        for selected in [true, false] {
+            value[variationSupported: true] = selected
+            value.setContinuous(false, using: capabilities)
+            XCTAssertFalse(value.usesCurves)
+            XCTAssertEqual(value.variesOverTime, selected)
+            XCTAssertEqual(value.intensity, 0.24)
+            XCTAssertEqual(value.sharpness, 0.73)
+            XCTAssertEqual(value.curvePoints, points)
+            value.setContinuous(true, using: capabilities)
+            XCTAssertEqual(value.usesCurves, selected)
+            XCTAssertEqual(value.duration, 1.2)
+            XCTAssertEqual(value.intensity, 0.24)
+            XCTAssertEqual(value.sharpness, 0.73)
+            XCTAssertEqual(value.curvePoints, points)
+        }
+    }
+
+    func testPickerRejectsUnsupportedVariationButAllowsReturnToConstant() throws {
+        var value = CustomHapticConfiguration.defaults
+        value.isContinuous = true
+        let original = value
+        value[variationSupported: false] = true
+        XCTAssertEqual(value, original)
+        value = draft()
+        let points = value.curvePoints
+        value[variationSupported: false] = false
+        XCTAssertFalse(value.variesOverTime)
+        XCTAssertEqual(value.curvePoints, points)
+        XCTAssertNoThrow(try HapticSwiftExport.source(for: value, capabilities: limits(dynamic: false)))
+        let constant = value
+        value[variationSupported: false] = true
+        XCTAssertEqual(value, constant)
+    }
+
     func testCurveDraftSnapshotSurvivesNavigationAndResetClearsIt() {
         let controller = HapticsController()
         controller.customConfiguration = draft()

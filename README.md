@@ -4,7 +4,7 @@ Explore Apple's system haptics, build your own vibration patterns, and take the 
 
 It runs on **iPhone and iPad with iOS/iPadOS 26.0 or later**, uses **Swift 6**, **SwiftUI**, and **Core Haptics**, and has **no third-party dependencies**. You can explore the interface in a simulator, but you'll need compatible physical hardware to feel the feedback.
 
-The current source version is [**v1.3 (build 4)**](https://github.com/sahilsatralkar/HapticsLab/tree/v1.3), with a clearer choice between constant intensity/sharpness and values that vary over time. Choose the `v1.3` tag for this version, or build `main` for ongoing development. The latest published GitHub release is [v1.2](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.2). See the [changelog](CHANGELOG.md) for changes by version.
+The latest release is [**v1.3 (build 4)**](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.3), with a clearer choice between constant intensity/sharpness and values that vary over time. Choose the `v1.3` tag for this version, or build `main` for ongoing development and the latest documentation. See the [changelog](CHANGELOG.md) for changes by version.
 
 ## Screenshots
 
@@ -14,12 +14,12 @@ The current source version is [**v1.3 (build 4)**](https://github.com/sahilsatra
     <th>Custom — Pattern controls</th>
   </tr>
   <tr>
-    <td><img src="Docs/Screenshots/home-3239.png" width="300" alt="Haptics lab home screen with thirteen System haptics buttons using medium-weight body text, Custom navigation, device information, and the Apple Pencil Pro footnote"></td>
-    <td><img src="Docs/Screenshots/custom-3240.png" width="300" alt="Custom screen with Play and Share, intensity and sharpness sliders, Continuous toggle, Repetitions, and the beginning of the Envelope controls"></td>
+    <td><img src="Docs/Screenshots/home-v1.3.png" width="300" alt="Haptics lab v1.3 Home on a simulator, showing thirteen System haptics buttons, Custom navigation, device information, and the Apple Pencil Pro footnote"></td>
+    <td><img src="Docs/Screenshots/custom-v1.3.png" width="300" alt="Custom in v1.3 with Play and Share, Continuous enabled, Duration, the Constant and Vary over time segmented control, and four timed curve points"></td>
   </tr>
 </table>
 
-These screenshots were supplied by the maintainer and show light appearance. The Custom capture predates the configurable curve controls described below. Home shows all thirteen System haptics buttons with the updated typography, the Custom navigation row, device information, and the Apple Pencil Pro footnote. On Custom, scroll down for the remaining envelope controls and **Reset to defaults**. Values and available controls can vary by device and event type.
+These are unchanged screenshots from the **v1.3 (build 4)** Xcode MCP verification on **20 October 2026**, captured on an **iPhone 17 Pro simulator running iOS 27.0** in light appearance. Home shows all thirteen System haptics buttons and the device/Pencil footer; custom haptics are unavailable in the simulator. Custom shows **Vary over time** selected with four points. Scroll down for Repetition, Envelope, and **Reset to defaults**. Values and available controls can vary by device and event type. These captures show the running interface, not physical feedback.
 
 ## Contents
 

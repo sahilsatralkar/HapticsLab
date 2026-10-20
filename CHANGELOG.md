@@ -2,11 +2,11 @@
 
 This file records user-facing changes by app version. **Unreleased** entries describe development on `main`; tagged versions link to their source or published GitHub release. Build numbers identify app builds within that history.
 
-## [1.3](https://github.com/sahilsatralkar/HapticsLab/tree/v1.3) — 2026-10-20
+## [1.3](https://github.com/sahilsatralkar/HapticsLab/releases/tag/v1.3) — 2026-10-21
 
 App version **1.3**, build **4**.
 
-Available as a source tag; no separate GitHub release has been published for this version.
+The source tag was created on 20 October; the GitHub source release was published on 21 October. The existing tag remains on verified app commit `80095e1`. Publication status and refreshed README screenshots were committed to `main` afterward and do not change the tagged source archive.
 
 ### Changed
 
